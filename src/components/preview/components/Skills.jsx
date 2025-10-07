@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import {ResumeContext} from "../../builder";
+import React from "react";
+import { useResumeContext } from "../../../context/ResumeContext";
 
 const Skills = ({ title, skills }) => {
-  const { resumeData, setResumeData } = useContext(ResumeContext);
+  const { resumeData, setResumeData } = useResumeContext();
 
   const handleTitleChange = (e) => {
     const newSkills = [...resumeData.skills];

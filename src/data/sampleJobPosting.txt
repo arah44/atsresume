@@ -1,0 +1,41 @@
+Senior Software Engineer - Full Stack Development
+
+Company: TechCorp Solutions Inc.
+Location: San Francisco, CA (Remote OK)
+Type: Full-time
+Posted: 2024-01-15
+
+About the Role:
+We are looking for a Senior Software Engineer to join our dynamic team. You will be responsible for developing and maintaining our web applications using modern technologies.
+
+Key Responsibilities:
+- Design and develop scalable web applications
+- Work with React, Node.js, and PostgreSQL
+- Collaborate with cross-functional teams
+- Write clean, maintainable code
+- Participate in code reviews
+- Mentor junior developers
+
+Requirements:
+- 5+ years of software development experience
+- Strong proficiency in JavaScript, React, and Node.js
+- Experience with databases (PostgreSQL, MongoDB)
+- Knowledge of cloud platforms (AWS, Azure)
+- Excellent communication skills
+- Bachelor's degree in Computer Science or related field
+
+Preferred Qualifications:
+- Experience with TypeScript
+- Knowledge of Docker and Kubernetes
+- Previous startup experience
+- Open source contributions
+
+Benefits:
+- Competitive salary ($120k - $160k)
+- Health, dental, and vision insurance
+- 401(k) with company matching
+- Flexible work arrangements
+- Professional development budget
+
+Apply at: https://techcorp.com/careers/senior-software-engineer
+Contact: careers@techcorp.com

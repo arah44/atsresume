@@ -1,13 +1,13 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {handleSkill} from "../utlis/handleSkill";
-import {ResumeContext} from "../../../../builder";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import { BsTrash3 } from 'react-icons/bs';
 import {removeSkill} from "../utlis/removeSkill";
 
 ;
 
 const SkillLine = ({skill, title, index}) => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
 
   return (
     <div

@@ -1,11 +1,11 @@
-import React, {useContext} from "react";
-import {ResumeContext} from "../../../../builder";
+import React from "react";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import {addEducation} from "../units/addEducation";
 import Education from "../components/Education";
 import {MdAddCircle} from "react-icons/md";
 
 const Educations = () => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
 
   return (
     <div className="flex-col-gap-2">

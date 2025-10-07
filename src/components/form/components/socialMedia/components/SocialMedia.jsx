@@ -1,14 +1,14 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {handleSocialMedia} from "../units/handleSocialMedia";
-import {ResumeContext} from "../../../../builder";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import {removeLanguage} from "../../languages/utils/removeLanguage";
 import {BsTrash3} from "react-icons/bs";
 import {removeSocialMedia} from "../units/removeSocialMedia";
 
 const SocialMedia = ({socialMedia, index}) => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
   return (
-    <div className="flex w-fill gap-5 items-top">
+    <div className="flex gap-5 w-fill items-top">
       <div
         className="flex-wrap-gap-2"
       >
@@ -16,7 +16,7 @@ const SocialMedia = ({socialMedia, index}) => {
           type="text"
           placeholder="Social Media"
           name="socialMedia"
-          className="w-full mb-0 other-input"
+          className="mb-0 w-full other-input"
           value={socialMedia.socialMedia}
           onChange={(e) => handleSocialMedia(resumeData, setResumeData, e, index)}
         />
@@ -24,7 +24,7 @@ const SocialMedia = ({socialMedia, index}) => {
           type="text"
           placeholder="Link"
           name="link"
-          className="w-full mb-0 other-input"
+          className="mb-0 w-full other-input"
           value={socialMedia.link}
           onChange={(e) => handleSocialMedia(resumeData, setResumeData, e, index)}
         />
@@ -35,7 +35,7 @@ const SocialMedia = ({socialMedia, index}) => {
           removeSocialMedia(resumeData, setResumeData, index)
         }}
         aria-label="Remove"
-        className="p-2 text-white h-fit bg-fuchsia-700 rounded text-xl"
+        className="p-2 text-xl text-white bg-fuchsia-700 rounded h-fit"
       >
         <BsTrash3/>
       </button>

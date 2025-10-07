@@ -1,11 +1,11 @@
-import React, {useContext} from "react";
-import {ResumeContext} from "../../../../builder";
+import React from "react";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import {addLanguage} from "../utils/addLanguage";
 import LanguageLine from "../components/LanguageLine";
 import {MdAddCircle} from "react-icons/md";
 
 const Languages = () => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
   // TODO replace hardcoded variables
 
   return (

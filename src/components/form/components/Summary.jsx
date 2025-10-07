@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import {ResumeContext} from "../../builder";
+import React from "react";
+import { useResumeContext } from "../../../context/ResumeContext";
 
 const Summary = () => {
-  const { resumeData, setResumeData, handleChange } = useContext(ResumeContext);
+  const { resumeData, setResumeData, handleChange } = useResumeContext();
   return (
     <div className="flex-col-gap-2">
       <h2 className="input-title">Summary</h2>

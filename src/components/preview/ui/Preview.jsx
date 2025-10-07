@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-no-undef */
 import {FaFacebook, FaGithub, FaInstagram, FaLinkedin, FaTwitter, FaYoutube,} from "react-icons/fa";
 import {CgWebsite} from "react-icons/cg";
-import React, {useContext, useState} from "react";
-import {ResumeContext} from "../../builder";
+import React, {useState} from "react";
+import {useResumeContext} from "../../../context/ResumeContext";
 import dynamic from "next/dynamic";
 import ModalHighlightMenu from "../components/ModalHighlightMenu";
 import Header from "../components/Header";
@@ -20,7 +20,7 @@ const DragDropContext = dynamic(
 );
 
 const Preview = () => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
   const icons = [
     {name: "github", icon: <FaGithub/>},
     {name: "linkedin", icon: <FaLinkedin/>},

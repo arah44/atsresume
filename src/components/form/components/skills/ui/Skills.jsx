@@ -1,9 +1,9 @@
-import React, {useContext} from 'react';
-import {ResumeContext} from "../../../../builder";
+import React from 'react';
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import SkillsGroup from "../components/SkillsGroup";
 
 const Skills = () => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
 
   return (
     <div>

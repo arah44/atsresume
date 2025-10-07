@@ -1,6 +1,6 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import dynamic from "next/dynamic";
-import {ResumeContext} from "../../../../builder";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import WorkExperience from "../components/WorkExperience";
 
 const Droppable = dynamic(
@@ -9,14 +9,14 @@ const Droppable = dynamic(
 );
 
 const WorkExperiences = () => {
-  const {resumeData} = useContext(ResumeContext);
+  const {resumeData} = useResumeContext();
 
   return (
-    <Droppable droppableId="work-experience" type="WORK_EXPERIENCE">
+    <Droppable droppableId="work-experience" type="WORK_EXPERIENCE" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
       {(provided) => (
         <div {...provided.droppableProps} ref={provided.innerRef}>
           <h2
-            className="section-title mb-1 border-b-2 border-gray-300 editable"
+            className="mb-1 border-b-2 border-gray-300 section-title editable"
             contentEditable
             suppressContentEditableWarning
           >
@@ -26,6 +26,7 @@ const WorkExperiences = () => {
             <WorkExperience
               key={index}
               item={item}
+              index={index}
             />
           ))}
           {provided.placeholder}

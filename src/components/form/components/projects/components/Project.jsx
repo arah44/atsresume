@@ -1,12 +1,12 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {handleProject} from "../utils/handleProject";
-import {ResumeContext} from "../../../../builder";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import {removeLanguage} from "../../languages/utils/removeLanguage";
 import {BsTrash3} from "react-icons/bs";
 import {removeProject} from "../utils/removeProject";
 
 const Project = ({project, index}) => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
   // TODO add a title for each input
   // TODO change the "start year" to the "start date" for clarity (also in the name of variable)
   // TODO change the "end year" to the "end date" for clarity  (also in the name of variable)

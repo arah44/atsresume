@@ -1,11 +1,11 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {handleEducation} from "../units/handleEducation";
-import {ResumeContext} from "../../../../builder";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import {BsTrash3} from "react-icons/bs";
 import {removeEducation} from "../units/removeEducation";
 
 const Education = ({education, index}) => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
 
   return (
     <div

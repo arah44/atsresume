@@ -1,11 +1,11 @@
-import React, {useContext} from "react";
-import {ResumeContext} from "../../../../builder";
+import React from "react";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import {addCertificate} from "../utils/addCertificate";
 import TestAndCertificateLine from "../components/TestAndCertificateLine";
 import {MdAddCircle} from "react-icons/md";
 
 const TestsAndCertifications = () => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
   const title = "Tests & Certifications";
 
   return (

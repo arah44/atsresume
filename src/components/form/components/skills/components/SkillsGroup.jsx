@@ -1,11 +1,11 @@
-import React, {useContext} from "react";
-import {ResumeContext} from "../../../../builder";
+import React from "react";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 import {addSkill} from "../utlis/addSkill";
 import SkillLine from "./SkillLine";
 import {MdAddCircle} from "react-icons/md";
 
 const SkillsGroup = ({title}) => {
-  const {resumeData, setResumeData} = useContext(ResumeContext);
+  const {resumeData, setResumeData} = useResumeContext();
 
   const skillType = resumeData.skills.find(
     (skillType) => skillType.title === title

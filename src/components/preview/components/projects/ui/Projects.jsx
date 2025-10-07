@@ -1,8 +1,8 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import DateRange from "../../../../utility/DateRange";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import {ResumeContext} from "../../../../builder";
+import { useResumeContext } from "../../../../../context/ResumeContext";
 
 const Droppable = dynamic(
   () => import("react-beautiful-dnd").then((mod) => mod.Droppable),
@@ -14,9 +14,9 @@ const Draggable = dynamic(
 );
 
 const Projects = () => {
-  const {resumeData} = useContext(ResumeContext);
+  const {resumeData} = useResumeContext();
   return (
-    <Droppable droppableId="projects" type="PROJECTS">
+    <Droppable droppableId="projects" type="PROJECTS" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
       {(provided) => (
         <div {...provided.droppableProps} ref={provided.innerRef}>
           <h2
@@ -64,6 +64,9 @@ const Projects = () => {
                   <Droppable
                     droppableId={`PROJECTS_KEY_ACHIEVEMENT-${index}`}
                     type="PROJECTS_KEY_ACHIEVEMENT"
+                    isDropDisabled={false}
+                    isCombineEnabled={false}
+                    ignoreContainerClipping={false}
                   >
                     {(provided) => (
                       <ul

@@ -1,9 +1,9 @@
-import React, {useContext} from "react";
-import {ResumeContext} from "../../builder";
+import React from "react";
+import {useResumeContext} from "../../../context/ResumeContext";
 
 const PersonalInformation = ({}) => {
   const {resumeData, setResumeData, handleProfilePicture, handleChange} =
-    useContext(ResumeContext);
+    useResumeContext();
 
   return (
     <div className="flex-col-gap-2">

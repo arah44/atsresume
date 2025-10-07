@@ -1,0 +1,143 @@
+{
+  "name": "Aran Joyce",
+  "position": "Senior Fullstack Developer",
+  "contactInformation": "+1-555-0123",
+  "email": "aran.joyce@example.com",
+  "address": "San Francisco, CA",
+  "profilePicture": "",
+  "socialMedia": [
+    {
+      "socialMedia": "LinkedIn",
+      "link": "https://linkedin.com/in/aranjoyce"
+    },
+    {
+      "socialMedia": "GitHub",
+      "link": "https://github.com/aranjoyce"
+    }
+  ],
+  "summary": "Aran Joyce is a seasoned Senior Fullstack Developer with extensive experience in designing and implementing scalable SaaS applications using Next.js, Node.js, and React. At Tech Unicorn Corp, Aran led technical architecture decisions and optimized application performance, resulting in a 30% increase in efficiency. With a strong background in TypeScript, PostgreSQL, and RESTful API design, Aran excels in mentoring junior developers and fostering a collaborative, innovation-driven environment. Committed to continuous learning and professional development, Aran actively contributes to open source projects and has successfully integrated microservices architecture and real-time communication solutions using WebSocket and GraphQL.",
+  "workExperience": [
+    {
+      "company": "Tech Innovations Inc.",
+      "position": "Senior Fullstack Developer",
+      "description": "Led the development and successful deployment of a microservices architecture that improved system scalability by 40%, enhancing the company's SaaS offerings. Designed and implemented CI/CD pipelines using Docker and AWS, reducing deployment time by 60% and increasing release frequency from monthly to weekly. Collaborated with cross-functional teams to optimize application performance, resulting in a 30% reduction in load times. Mentored a team of 5 junior developers, fostering an innovation-driven and collaborative environment. Played a key role in technical architecture decisions, ensuring the use of cutting-edge technologies like Next.js, Node.js, and PostgreSQL.",
+      "keyAchievements": "1. Spearheaded the transition to a microservices architecture, achieving a 40% increase in system scalability and reliability. 2. Developed and implemented CI/CD pipelines, reducing deployment time by 60% and increasing release frequency from monthly to weekly. 3. Optimized application performance, reducing load times by 30% and improving user satisfaction. 4. Mentored a team of 5 junior developers, enhancing their skills in Next.js, Node.js, and TypeScript. 5. Collaborated with product and design teams to deliver high-quality, scalable web applications, contributing to a 25% increase in user engagement.",
+      "startYear": "2021",
+      "endYear": "Present"
+    },
+    {
+      "company": "StartupCo",
+      "position": "Fullstack Developer",
+      "description": "Led the design and implementation of a scalable e-commerce platform using Next.js and Node.js, resulting in a 30% increase in user engagement within the first quarter. Collaborated with cross-functional teams to optimize application performance, achieving a 40% reduction in load times. Developed and maintained RESTful APIs, enhancing data retrieval speed by 25%. Utilized Docker for containerization, ensuring seamless deployment across environments. Contributed to the adoption of CI/CD practices, reducing deployment time by 50%.",
+      "keyAchievements": "1. Developed RESTful APIs that improved data retrieval speed by 25%.\n2. Achieved a 30% increase in user engagement through the implementation of a scalable e-commerce platform.\n3. Reduced application load times by 40% through performance optimization.\n4. Implemented Docker for containerization, enhancing deployment efficiency.\n5. Contributed to CI/CD adoption, cutting deployment time by 50%.",
+      "startYear": "2019",
+      "endYear": "2020"
+    }
+  ],
+  "education": [
+    {
+      "school": "University of California, Berkeley",
+      "degree": "Bachelor of Science in Computer Science",
+      "startYear": "2015",
+      "endYear": "2019"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Real-time Chat Application",
+      "description": "Built scalable chat app using WebSockets and Redis",
+      "technologies": [
+        "Next.js",
+        "Socket.io",
+        "Redis",
+        "PostgreSQL"
+      ],
+      "startYear": "2023",
+      "endYear": "2023",
+      "link": "https://github.com/aranjoyce/chat-app"
+    },
+    {
+      "name": "AI-Powered Resume Builder",
+      "description": "Developed ATS-optimized resume generation using AI",
+      "technologies": [
+        "Next.js",
+        "LangChain",
+        "OpenAI",
+        "TypeScript"
+      ],
+      "startYear": "2024",
+      "endYear": "2024",
+      "link": "https://atsresume.com"
+    }
+  ],
+  "skills": [
+    {
+      "title": "Technical Skills",
+      "skills": [
+        "Next.js",
+        "Node.js",
+        "TypeScript",
+        "React",
+        "PostgreSQL",
+        "RESTful API design",
+        "GraphQL",
+        "WebSocket",
+        "real-time communication",
+        "relational databases"
+      ]
+    },
+    {
+      "title": "Frameworks & Libraries",
+      "skills": [
+        "Next.js",
+        "React",
+        "Node.js",
+        "TypeScript",
+        "GraphQL",
+        "WebSocket"
+      ]
+    },
+    {
+      "title": "Tools & Technologies",
+      "skills": [
+        "Docker",
+        "CI/CD",
+        "AWS",
+        "DevOps",
+        "cloud platform",
+        "microservices architecture"
+      ]
+    },
+    {
+      "title": "Soft Skills",
+      "skills": [
+        "Leadership",
+        "Mentoring",
+        "Collaboration",
+        "Communication",
+        "Design",
+        "Implement",
+        "Optimize"
+      ]
+    },
+    {
+      "title": "Domain Expertise",
+      "skills": [
+        "SaaS",
+        "scalable web applications",
+        "technical architecture",
+        "clean code",
+        "code reviews",
+        "open source contributions"
+      ]
+    }
+  ],
+  "languages": [
+    "English",
+    "Spanish"
+  ],
+  "certifications": [
+    "AWS Certified Developer Associate (2023)",
+    "Meta React Professional Certificate (2022)"
+  ]
+}
