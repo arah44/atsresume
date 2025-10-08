@@ -14,8 +14,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({ type, onDataLoaded }) =>
     if (!file) return;
 
     try {
+      // Read file content
+      const text = await file.text();
+      const data = JSON.parse(text);
+
       if (type === 'person') {
-        await loadPersonData(file);
+        loadPersonData(data);
         onDataLoaded?.();
       } else {
         // Job data loading handled elsewhere

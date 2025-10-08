@@ -18,12 +18,9 @@ export const ResumeGenerationLoadingState: React.FC<ResumeGenerationLoadingState
   currentStep
 }) => {
   const steps = [
-    { status: GenerationStatus.ANALYZING_JOB, label: 'Analyzing Job', emoji: '📊' },
-    { status: GenerationStatus.EXTRACTING_KEYWORDS, label: 'Extracting Keywords', emoji: '🔑' },
-    { status: GenerationStatus.OPTIMIZING_SUMMARY, label: 'Optimizing Summary', emoji: '✍️' },
-    { status: GenerationStatus.ENHANCING_EXPERIENCE, label: 'Enhancing Experience', emoji: '💼' },
-    { status: GenerationStatus.OPTIMIZING_SKILLS, label: 'Optimizing Skills', emoji: '🎯' },
-    { status: GenerationStatus.GENERATING_RESUME, label: 'Generating Resume', emoji: '📄' }
+    { status: GenerationStatus.ANALYZING_JOB, label: 'Analyzing Job Requirements', emoji: '📊' },
+    { status: GenerationStatus.EXTRACTING_KEYWORDS, label: 'Extracting ATS Keywords', emoji: '🔑' },
+    { status: GenerationStatus.GENERATING_RESUME, label: 'Generating Optimized Resume', emoji: '📄' }
   ];
 
   const getStepState = (stepStatus: GenerationStatus) => {

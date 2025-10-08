@@ -82,69 +82,39 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // Step 1: Analyzing job requirements
       let updatedGen = updateGenerationState(generation, {
         status: GenerationStatus.ANALYZING_JOB,
-        progress: 10,
+        progress: 25,
         currentStep: 'Analyzing job requirements...'
       });
-      setGenerationProgress(10);
+      setGenerationProgress(25);
       setCurrentStep('Analyzing job requirements...');
       await new Promise(resolve => setTimeout(resolve, 500)); // Allow UI to update
 
       // Step 2: Extracting keywords
       updatedGen = updateGenerationState(updatedGen, {
         status: GenerationStatus.EXTRACTING_KEYWORDS,
-        progress: 25,
+        progress: 50,
         currentStep: 'Extracting ATS keywords...'
       });
-      setGenerationProgress(25);
+      setGenerationProgress(50);
       setCurrentStep('Extracting ATS keywords...');
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Step 3: Optimizing summary
-      updatedGen = updateGenerationState(updatedGen, {
-        status: GenerationStatus.OPTIMIZING_SUMMARY,
-        progress: 45,
-        currentStep: 'Optimizing professional summary...'
-      });
-      setGenerationProgress(45);
-      setCurrentStep('Optimizing professional summary...');
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Step 4: Enhancing experience
-      updatedGen = updateGenerationState(updatedGen, {
-        status: GenerationStatus.ENHANCING_EXPERIENCE,
-        progress: 65,
-        currentStep: 'Enhancing work experience...'
-      });
-      setGenerationProgress(65);
-      setCurrentStep('Enhancing work experience...');
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Step 5: Optimizing skills
-      updatedGen = updateGenerationState(updatedGen, {
-        status: GenerationStatus.OPTIMIZING_SKILLS,
-        progress: 80,
-        currentStep: 'Optimizing skills section...'
-      });
-      setGenerationProgress(80);
-      setCurrentStep('Optimizing skills section...');
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Step 6: Generate final resume
+      // Step 3: Generate final resume
       updatedGen = updateGenerationState(updatedGen, {
         status: GenerationStatus.GENERATING_RESUME,
-        progress: 90,
-        currentStep: 'Generating final resume...'
+        progress: 75,
+        currentStep: 'Generating optimized resume...'
       });
-      setGenerationProgress(90);
-      setCurrentStep('Generating final resume...');
+      setGenerationProgress(75);
+      setCurrentStep('Generating optimized resume...');
 
       // Call server action directly (respects client-server boundary)
       const result = await generateResumeAction(input);
 
-      // Step 7: Add unique ID to resume
+      // Add unique ID to resume
       const resumeWithId = ensureResumeId(result.resume);
 
-      // Step 8: Complete
+      // Complete
       const duration = Date.now() - startTime;
       updatedGen = updateGenerationState(updatedGen, {
         status: GenerationStatus.COMPLETED,
@@ -219,10 +189,9 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const syncPersonAndTargetJobToResume = useCallback(() => {
     const state = dataManager.getState();
-    if (state.person && state.targetJob) {
+    if (state.baseResume && state.targetJob) {
       const input: ResumeGenerationInput = {
-        person: state.person,
-        currentResume: state.resume || undefined,
+        baseResume: state.baseResume,
         targetJob: state.targetJob
       };
       generateResume(input);
