@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Info } from 'lucide-react';
+import { FileText, Home, Info } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ResumePage() {
   const params = useParams();
@@ -86,9 +87,21 @@ export default function ResumePage() {
   return (
     <div className="min-h-screen bg-background">
       <Tabs defaultValue="resume" className="w-full">
-        <div className="sticky top-0 z-10 border-b bg-background">
+        <div className="flex sticky top-0 z-10 items-center px-8 border-b bg-background exclude-print">
+          <div className="container flex justify-between items-center px-4 mx-auto">
+
+          <Button variant="outline" asChild>
+            <Link href="/dashboard" className="gap-2">
+              <Home className="w-4 h-4" />
+              Dashboard
+            </Link>
+          </Button>
+
           <div className="container px-4 mx-auto">
-            <TabsList className="justify-start w-full h-14 exclude-print">
+            <TabsList className="justify-start h-14 w-fit exclude-print">
+
+              {/* link to return to dashboard */}
+
               <TabsTrigger value="resume" className="gap-2">
                 <FileText className="w-4 h-4" />
                 Resume Editor
@@ -105,6 +118,7 @@ export default function ResumePage() {
             </TabsList>
           </div>
         </div>
+                </div>
 
         <TabsContent value="resume" className="mt-0">
           <Builder initialResume={resume} />

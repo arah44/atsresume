@@ -19,6 +19,8 @@ import {
 } from "./ui/dialog";
 import dynamic from "next/dynamic";
 import Form from "./form/ui/Form";
+import { Save } from "lucide-react";
+import { toast } from "sonner";
 
 // server side rendering false
 const Print = dynamic(() => import("./utility/WinPrint"), {
@@ -45,9 +47,10 @@ function BuilderContent({ initialResume }) {
       const url = ResumeStorageService.getResumeUrl(savedId);
       setSavedUrl(url);
       setShowSaveModal(true);
+      toast.success('Resume saved successfully!');
     } catch (error) {
       console.error('Failed to save resume:', error);
-      alert('Failed to save resume. Please try again.');
+      toast.error('Failed to save resume. Please try again.');
     }
   };
 
@@ -59,24 +62,7 @@ function BuilderContent({ initialResume }) {
         keywords="ATS-friendly, Resume optimization, Keyword-rich resume, Applicant Tracking System, ATS resume builder, ATS resume templates, ATS-compliant resume, ATS-optimized CV, ATS-friendly format, ATS resume tips, Resume writing services, Career guidance, Job search in India, Resume tips for India, Professional resume builder, Cover letter writing, Interview preparation, Job interview tips, Career growth, Online job applications, resume builder, free resume builder, resume ats, best free resume builder, resume creator, resume cv, resume design, resume editor, resume maker"
       />
 
-      {/* Navigation Header */}
-      <div className="exclude-print">
-        <div>
-          <Link href="/">
-            ATSResume
-          </Link>
-          <div className="flex gap-2">
-            <Button onClick={handleSaveResume} variant="default" size="default">
-              💾 Save Resume
-            </Button>
-            <Button asChild variant="default">
-              <Link href="/dashboard">
-                📊 Dashboard
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
+
 
       {/* Save Success Dialog */}
       <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
@@ -94,7 +80,7 @@ function BuilderContent({ initialResume }) {
             <Button
               onClick={() => {
                 navigator.clipboard.writeText(savedUrl);
-                alert('Link copied to clipboard!');
+                toast.success('Link copied to clipboard!');
               }}
               variant="default"
               className="flex-1"
@@ -121,7 +107,19 @@ function BuilderContent({ initialResume }) {
         )}
         <Preview/>
       </div>
+
+      {/* Action Buttons */}
       <FormCloseOpenBtn formClose={formClose} setFormClose={setFormClose}/>
+      <Button
+        aria-label="Save Resume"
+        onClick={handleSaveResume}
+        className="fixed bottom-5 right-10 font-bold shadow-lg exclude-print"
+        size="lg"
+      >
+        <Save className="w-5 h-5 mr-2" />
+        Save Resume
+      </Button>
+
       <Print/>
     </>
   );

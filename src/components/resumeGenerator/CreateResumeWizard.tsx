@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { Person, TargetJobJson, GenerationStatus, Resume } from '@/types';
 import { generateResumeAction, generateBaseResumeAction } from '@/app/actions/resumeGeneration';
 import { ResumeStorageService } from '@/services/resumeStorage';
-import { ProfileStorageService, SavedProfile } from '@/services/profileStorage';
+import { ProfileStorageService, UserProfile } from '@/services/profileStorage';
 import { JobStorageService, SavedJob } from '@/services/jobStorage';
 import { JobDataParser } from '@/services/jobDataParser';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -59,9 +59,8 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
   const [currentStepText, setCurrentStepText] = useState('');
   const [isParsing, setIsParsing] = useState(false);
   const [rawJobContent, setRawJobContent] = useState('');
-  const [savedProfiles, setSavedProfiles] = useState<SavedProfile[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [savedJobs, setSavedJobs] = useState<SavedJob[]>([]);
-  const [selectedProfileId, setSelectedProfileId] = useState<string>('');
   const [selectedJobId, setSelectedJobId] = useState<string>('');
 
   const personForm = useForm<PersonFormData>({
@@ -83,22 +82,26 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
     }
   });
 
-  // Load saved profiles and jobs when dialog opens
+  // Load user profile and jobs when dialog opens
   useEffect(() => {
     if (open) {
-      const profiles = ProfileStorageService.getAllProfiles();
+      const profile = ProfileStorageService.getProfile();
       const jobs = JobStorageService.getAllJobs();
-      setSavedProfiles(profiles);
+      setUserProfile(profile);
       setSavedJobs(jobs);
-    }
-  }, [open]);
 
-  const handleLoadProfile = (profileId: string) => {
-    const profile = savedProfiles.find(p => p.id === profileId);
-    if (profile) {
-      personForm.setValue('name', profile.name);
-      personForm.setValue('raw_content', profile.raw_content);
-      setSelectedProfileId(profileId);
+      // Auto-load profile data if available
+      if (profile) {
+        personForm.setValue('name', profile.name);
+        personForm.setValue('raw_content', profile.raw_content);
+      }
+    }
+  }, [open, personForm]);
+
+  const handleLoadProfile = () => {
+    if (userProfile) {
+      personForm.setValue('name', userProfile.name);
+      personForm.setValue('raw_content', userProfile.raw_content);
       toast.success('Profile loaded!');
     }
   };
@@ -215,31 +218,27 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
       // Step 1: Get base resume
       let baseResume: Resume;
 
-      if (selectedProfileId) {
-        // Load base resume from selected profile
-        updateProgress(GenerationStatus.PENDING, 5, 'Loading base resume from profile...');
-        const profile = ProfileStorageService.getProfileById(selectedProfileId);
-
-        if (profile?.baseResume) {
-          baseResume = profile.baseResume;
-          toast.success(`Using base resume for ${profile.name}`);
-        } else {
-          // Fallback: profile exists but no base resume (shouldn't happen with new profiles)
-          updateProgress(GenerationStatus.PENDING, 10, 'Generating base resume...');
-          baseResume = await generateBaseResumeAction(person);
-
-          // Save to profile for future use
-          ProfileStorageService.updateProfile(selectedProfileId, {
-            baseResume,
-            metadata: {
-              lastUpdated: Date.now()
-            }
-          });
-          toast.success('Base resume generated and saved to profile');
-        }
-      } else {
-        // No profile selected - generate temporary base resume
+      if (userProfile?.baseResume) {
+        // Use existing base resume from user profile
+        updateProgress(GenerationStatus.PENDING, 5, 'Loading base resume from your profile...');
+        baseResume = userProfile.baseResume;
+        toast.success(`Using your base resume`);
+      } else if (userProfile) {
+        // Profile exists but no base resume - generate and save it
         updateProgress(GenerationStatus.PENDING, 10, 'Generating base resume...');
+        baseResume = await generateBaseResumeAction(person);
+
+        // Save to profile for future use
+        ProfileStorageService.updateProfile({
+          baseResume,
+          metadata: {
+            lastUpdated: Date.now()
+          }
+        });
+        toast.success('Base resume generated and saved to your profile');
+      } else {
+        // No profile - generate temporary base resume
+        updateProgress(GenerationStatus.PENDING, 10, 'Generating temporary base resume...');
         baseResume = await generateBaseResumeAction(person);
         toast.info('Base resume generated (not saved to profile)');
       }
@@ -338,49 +337,50 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
                   </p>
                 </div>
 
-                {/* Load Saved Profile */}
-                {savedProfiles.length > 0 && (
+                {/* Show User Profile Status */}
+                {userProfile && (
                   <Card className="bg-blue-50 border-blue-200">
                     <CardContent className="pt-4 space-y-3">
-                      <label className="flex gap-2 items-center text-sm font-semibold text-blue-900">
-                        <Database className="w-4 h-4 text-blue-600" />
-                        Load Saved Profile ({savedProfiles.length} available)
-                      </label>
-                      <Select value={selectedProfileId} onValueChange={handleLoadProfile}>
-                        <SelectTrigger className="bg-white">
-                          <SelectValue placeholder="Select a profile to load..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {savedProfiles.map((profile) => (
-                            <SelectItem key={profile.id} value={profile.id}>
-                              <div className="flex gap-2 items-center">
-                                <span className="font-medium">{profile.name}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  ({new Date(profile.timestamp).toLocaleDateString()})
-                                </span>
-                                {profile.baseResume && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    Base Resume ✓
-                                  </Badge>
-                                )}
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex items-center justify-between">
+                        <label className="flex gap-2 items-center text-sm font-semibold text-blue-900">
+                          <User className="w-4 h-4 text-blue-600" />
+                          Your Profile
+                        </label>
+                        {userProfile.baseResume && (
+                          <Badge variant="secondary" className="text-xs">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Base Resume Ready
+                          </Badge>
+                        )}
+                      </div>
 
-                      {/* Show base resume info when profile selected */}
-                      {selectedProfileId && savedProfiles.find(p => p.id === selectedProfileId)?.baseResume && (
-                        <div className="bg-white/60 rounded-md p-3 border border-blue-300">
-                          <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
-                            <span className="text-sm font-medium text-blue-900">Base Resume Available</span>
+                      <div className="bg-white/60 rounded-md p-3 border border-blue-300">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-blue-900">{userProfile.name}</span>
                           </div>
-                          <p className="text-xs text-blue-700">
-                            This profile includes a pre-generated base resume. We'll use it to create your job-specific resume faster.
-                          </p>
+                          {userProfile.baseResume ? (
+                            <p className="text-xs text-blue-700">
+                              Your profile includes a base resume. We&apos;ll use it to create your job-specific resume faster.
+                            </p>
+                          ) : (
+                            <p className="text-xs text-blue-700">
+                              A base resume will be generated from your profile data.
+                            </p>
+                          )}
                         </div>
-                      )}
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleLoadProfile}
+                        className="w-full bg-white"
+                      >
+                        <User className="w-3 h-3 mr-2" />
+                        Reload Profile Data
+                      </Button>
                     </CardContent>
                   </Card>
                 )}

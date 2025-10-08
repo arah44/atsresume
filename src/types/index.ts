@@ -65,6 +65,7 @@ export interface Resume {
   email: string;
   address: string;
   profilePicture: string;
+  showProfilePicture?: boolean; // Toggle to show/hide profile picture in resume
   socialMedia: SocialMediaLink[];
   summary: string;
   education: Education[];

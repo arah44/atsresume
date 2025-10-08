@@ -37,7 +37,7 @@ const Preview = () => {
         <ModalHighlightMenu/>
         <DragDropContext onDragEnd={onDragEndHandler}>
           <Header resumeData={resumeData} icons={icons}/>
-          <hr className="border-dashed my-2"/>
+          <hr className="my-2 border-dashed"/>
           <div className="grid grid-cols-3 gap-6">
             <LeftSide resumeData={resumeData}/>
             <RightSide resumeData={resumeData}/>

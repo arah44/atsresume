@@ -1,5 +1,6 @@
-import React from 'react';
-import { EnhancedLoadUnload } from '../../resumeGenerator/EnhancedLoadUnload';
+"use client";
+
+import React from "react";
 import PersonalInformation from "../components/PersonalInformation";
 import SocialMedias from "../components/socialMedia/ui/SocialMedias";
 import Summary from "../components/Summary";
@@ -12,8 +13,7 @@ import TestsAndCertifications from "../components/testsAndCertifications/ui/Test
 
 const EnhancedForm: React.FC = () => {
   return (
-    <div className="enhanced-form p-4 bg-fuchsia-600 exclude-print md:max-w-[40%] md:h-screen md:overflow-y-scroll">
-      <EnhancedLoadUnload />
+    <div className="enhanced-form p-6 exclude-print md:max-w-[40%] md:h-screen md:overflow-y-scroll space-y-4">
       <PersonalInformation />
       <SocialMedias />
       <Summary />

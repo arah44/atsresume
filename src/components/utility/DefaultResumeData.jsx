@@ -5,6 +5,7 @@ const DefaultResumeData = {
   email: "beddylea@gmail.com",
   address: "San Francisco, CA",
   profilePicture: "",
+  showProfilePicture: true,
   socialMedia: [
     {
       socialMedia: "Github",
@@ -72,7 +73,7 @@ const DefaultResumeData = {
       title: "Additional Skills",
       skills: [
         "Public Speaking", "Writing", "Research"
-      ] 
+      ]
     }
   ],
   languages: [

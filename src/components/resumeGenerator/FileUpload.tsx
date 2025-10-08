@@ -7,7 +7,7 @@ interface FileUploadProps {
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({ type, onDataLoaded }) => {
-  const { loadPersonData, loadJobData, error } = useResumeContext();
+  const { loadPersonData, error } = useResumeContext();
 
   const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -16,14 +16,15 @@ export const FileUpload: React.FC<FileUploadProps> = ({ type, onDataLoaded }) =>
     try {
       if (type === 'person') {
         await loadPersonData(file);
+        onDataLoaded?.();
       } else {
-        await loadJobData(file);
+        // Job data loading handled elsewhere
+        console.warn('Job data loading not implemented in this component');
       }
-      onDataLoaded?.();
     } catch (err) {
       console.error(`Failed to load ${type} data:`, err);
     }
-  }, [type, loadPersonData, loadJobData, onDataLoaded]);
+  }, [type, loadPersonData, onDataLoaded]);
 
   const fileType = type === 'person' ? 'person.json' : 'job.json';
   const label = type === 'person' ? 'Personal Data' : 'Job Data';

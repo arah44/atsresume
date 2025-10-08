@@ -15,7 +15,7 @@ import { config } from 'dotenv';
 config();
 
 import { CachedLangChainResumeGenerator, clearCache, listCache, getCacheStats } from '../../src/services/langchain/cache';
-import type { Person, TargetJobJson, ResumeGenerationInput } from '../../src/types';
+import type { Person, TargetJobJson, ResumeGenerationInput, Resume } from '../../src/types';
 
 // Test data
 const testPerson: Person = {
@@ -208,9 +208,75 @@ async function testResumeGeneration(useCache: boolean = true) {
   const generator = useCache ? new CachedLangChainResumeGenerator() : new CachedLangChainResumeGenerator();
   log(`Using ${useCache ? 'CACHED' : 'NON-CACHED'} generator`, 'info');
 
+  // Create a base resume with placeholder data for testing
+  const baseResume: Resume = {
+    name: testPerson.name,
+    position: 'Senior Fullstack Developer',
+    contactInformation: '+1-555-0123',
+    email: 'aran.joyce@example.com',
+    address: 'San Francisco, CA',
+    profilePicture: '',
+    socialMedia: [
+      { socialMedia: 'LinkedIn', link: 'https://linkedin.com/in/aranjoyce' },
+      { socialMedia: 'GitHub', link: 'https://github.com/aranjoyce' }
+    ],
+    summary: 'Experienced fullstack developer with 5+ years building scalable web applications. Expert in Next.js, React, Node.js, and TypeScript.',
+    education: [
+      {
+        school: 'University of California, Berkeley',
+        degree: 'Bachelor of Science in Computer Science',
+        startYear: '2015',
+        endYear: '2019'
+      }
+    ],
+    workExperience: [
+      {
+        company: 'Tech Innovations Inc.',
+        position: 'Senior Fullstack Developer',
+        startYear: '2021',
+        endYear: 'Present',
+        description: 'Led development of microservices architecture serving 1M+ users. Implemented CI/CD pipelines reducing deployment time by 60%.',
+        keyAchievements: 'Mentored 5 junior developers, reduced deployment time by 60%, served 1M+ users'
+      },
+      {
+        company: 'StartupCo',
+        position: 'Fullstack Developer',
+        startYear: '2019',
+        endYear: '2020',
+        description: 'Built e-commerce platform processing $2M+ in annual revenue. Developed RESTful APIs handling 10k+ requests per minute.',
+        keyAchievements: 'Built platform processing $2M+ annually, handled 10k+ requests/min'
+      }
+    ],
+    projects: [
+      {
+        name: 'Real-time Chat Application',
+        description: 'Built scalable chat app using WebSockets and Redis',
+        technologies: ['Next.js', 'Socket.io', 'Redis', 'PostgreSQL'],
+        link: 'https://github.com/aranjoyce/chat-app',
+        startYear: '2023',
+        endYear: '2023'
+      }
+    ],
+    skills: [
+      {
+        title: 'Frontend',
+        skills: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS']
+      },
+      {
+        title: 'Backend',
+        skills: ['Node.js', 'Express', 'PostgreSQL', 'MongoDB']
+      },
+      {
+        title: 'DevOps',
+        skills: ['Docker', 'AWS', 'CI/CD', 'Git']
+      }
+    ],
+    languages: ['English (Native)', 'Spanish (Intermediate)'],
+    certifications: ['AWS Certified Developer Associate (2023)', 'Meta React Professional Certificate (2022)']
+  };
+
   const input: ResumeGenerationInput = {
-    person: testPerson,
-    currentResume: undefined, // Testing from scratch
+    baseResume,
     targetJob: testJob
   };
 

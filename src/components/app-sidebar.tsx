@@ -3,10 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  FileTextIcon,
   LayoutDashboardIcon,
-  PlusCircleIcon,
-  FolderIcon,
   HelpCircleIcon,
   HomeIcon,
   SparklesIcon,
@@ -14,7 +11,6 @@ import {
   BriefcaseIcon,
 } from "lucide-react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -36,14 +32,14 @@ const data = {
   },
   navMain: [
     {
+      title: "Home",
+      url: "/",
+      icon: HomeIcon,
+    },
+    {
       title: "My Resumes",
       url: "/dashboard",
       icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Create Resume",
-      url: "/",
-      icon: PlusCircleIcon,
     },
     {
       title: "Profiles",
@@ -54,18 +50,6 @@ const data = {
       title: "Jobs",
       url: "/dashboard/jobs",
       icon: BriefcaseIcon,
-    },
-  ],
-  documents: [
-    {
-      name: "Recent Resumes",
-      url: "/dashboard",
-      icon: FolderIcon,
-    },
-    {
-      name: "Templates",
-      url: "/",
-      icon: FileTextIcon,
     },
   ],
   navSecondary: [
@@ -97,7 +81,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

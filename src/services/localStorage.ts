@@ -1,10 +1,12 @@
 import { Person, TargetJobJson, Resume } from '../types';
+import { ProfileStorageService } from './profileStorage';
 
 // Local storage keys
 const STORAGE_KEYS = {
   PERSON: 'atsresume_person',
   TARGET_JOB: 'atsresume_target_job',
-  RESUME: 'atsresume_resume'
+  RESUME: 'atsresume_resume',
+  BASE_RESUME: 'atsresume_base_resume'
 } as const;
 
 export class LocalStorageService {
@@ -27,12 +29,32 @@ export class LocalStorageService {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.PERSON);
       if (!data) return null;
-      
+
       const person = JSON.parse(data) as Person;
       console.log('Person data loaded from local storage');
       return person;
     } catch (error) {
       console.error('Failed to load person data from local storage:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Load base resume from user profile
+   * This is the resume generated from the user's profile
+   */
+  static loadBaseResume(): Resume | null {
+    try {
+      const profile = ProfileStorageService.getProfile();
+      if (!profile?.baseResume) {
+        console.log('No base resume found in profile');
+        return null;
+      }
+
+      console.log('Base resume loaded from profile');
+      return profile.baseResume;
+    } catch (error) {
+      console.error('Failed to load base resume from profile:', error);
       return null;
     }
   }
@@ -56,7 +78,7 @@ export class LocalStorageService {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.TARGET_JOB);
       if (!data) return null;
-      
+
       const targetJob = JSON.parse(data) as TargetJobJson;
       console.log('Target job data loaded from local storage');
       return targetJob;
@@ -85,7 +107,7 @@ export class LocalStorageService {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.RESUME);
       if (!data) return null;
-      
+
       const resume = JSON.parse(data) as Resume;
       console.log('Resume data loaded from local storage');
       return resume;
@@ -162,11 +184,11 @@ export class LocalStorageService {
   static importData(jsonString: string): boolean {
     try {
       const data = JSON.parse(jsonString);
-      
+
       if (data.person) this.savePerson(data.person);
       if (data.targetJob) this.saveTargetJob(data.targetJob);
       if (data.resume) this.saveResume(data.resume);
-      
+
       console.log('Data imported successfully');
       return true;
     } catch (error) {

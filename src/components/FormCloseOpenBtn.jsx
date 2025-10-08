@@ -1,15 +1,19 @@
+"use client";
 import React, { } from "react";
-import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from "react-icons/bs"
+import { Button } from "./ui/button";
+import { Fullscreen, PanelLeftOpen } from "lucide-react";
+import { SheetOverlay } from "./ui/sheet";
 
 const FormCloseOpenBtn = ({ formClose, setFormClose }) => {
   return (
-    <button
+    <Button
       aria-label="Form Open/Close"
-      className="exclude-print fixed bottom-5 left-10 font-bold rounded-full bg-white text-fuchsia-600 shadow-lg border-2 border-white"
+      variant="outline"
+      className="fixed bottom-5 left-10 order-2 font-bold border-white shadow-lg b exclude-print"
       onClick={() => setFormClose(!formClose)}
     >
-      {formClose ? <BsFillArrowRightCircleFill className="w-10 h-10" title="Form Open" /> : <BsFillArrowLeftCircleFill className="w-10 h-10" title="Form Close" />}
-    </button>
+      {formClose ? <PanelLeftOpen className="w-10 h-10" title="Form Open" /> : <Fullscreen className="w-10 h-10" title="Form Close" />}
+    </Button>
   )
 }
 

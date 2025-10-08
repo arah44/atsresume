@@ -6,7 +6,6 @@ import { TargetJobForm } from './forms/TargetJobForm';
 import { Person, TargetJobJson, ResumeGenerationInput } from '../../types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { Checkbox } from '../ui/checkbox';
 import { Separator } from '../ui/separator';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Badge } from '../ui/badge';
@@ -78,30 +77,44 @@ export const DataManager: React.FC<DataManagerProps> = ({
         </Alert>
       )}
 
-      {/* Generation Settings */}
+      {/* Base Resume Status */}
       <Card>
         <CardHeader>
-          <CardTitle>Generation Settings</CardTitle>
+          <CardTitle className="flex justify-between items-center">
+            Base Resume
+            <Badge variant={state.baseResume ? "default" : "secondary"}>
+              {state.baseResume ? "Available" : "Not Found"}
+            </Badge>
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="include-current-resume"
-              checked={state.includeCurrentResume}
-              onCheckedChange={(checked) =>
-                dataManager.setIncludeCurrentResume(checked as boolean)
-              }
-            />
-            <label
-              htmlFor="include-current-resume"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Include current resume in generation
-            </label>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            When enabled, the AI will build upon your existing resume. When disabled, it will create a new resume from your person data.
-          </p>
+        <CardContent>
+          {state.baseResume ? (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Your base resume will be used to generate tailored resumes for specific jobs.
+              </p>
+              <div className="grid grid-cols-3 gap-4 pt-2">
+                <div className="text-center">
+                  <div className="text-lg font-semibold">{state.baseResume.workExperience?.length || 0}</div>
+                  <div className="text-xs text-muted-foreground">Work Exp.</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-semibold">{state.baseResume.skills?.length || 0}</div>
+                  <div className="text-xs text-muted-foreground">Skills</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-semibold">{state.baseResume.education?.length || 0}</div>
+                  <div className="text-xs text-muted-foreground">Education</div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                No base resume found. Please create your profile first in the Profile page.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -214,7 +227,7 @@ export const DataManager: React.FC<DataManagerProps> = ({
               </div>
               <div>
                 <h4 className="font-medium">Target Position</h4>
-                <p className="text-sm text-muted-foreground">{state.resume.targetPosition}</p>
+                <p className="text-sm text-muted-foreground">{state.resume.position}</p>
               </div>
               <div>
                 <h4 className="font-medium">Summary</h4>

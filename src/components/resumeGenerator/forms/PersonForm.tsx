@@ -19,7 +19,7 @@ type PersonFormData = z.infer<typeof personSchema>;
 interface PersonFormProps {
   initialData: Person;
   onSubmit: (data: Person) => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   isLoading?: boolean;
 }
 
@@ -59,7 +59,7 @@ export const PersonForm: React.FC<PersonFormProps> = ({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="raw_content"
@@ -82,9 +82,11 @@ export const PersonForm: React.FC<PersonFormProps> = ({
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? 'Saving...' : 'Save Person Data'}
               </Button>
-              <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
-              </Button>
+              {onCancel && (
+                <Button type="button" variant="outline" onClick={onCancel}>
+                  Cancel
+                </Button>
+              )}
             </div>
           </form>
         </Form>

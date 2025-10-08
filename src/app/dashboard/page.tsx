@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { Trash2, Copy, Download, Plus, FileText, Clock, Hash, User, Briefcase, Target } from 'lucide-react';
+import { Trash2, Copy, Download, Plus, FileText, Clock, Hash, User, Briefcase, Target, Eye } from 'lucide-react';
 import { CreateResumeWizard } from '@/components/resumeGenerator/CreateResumeWizard';
 
 interface DashboardResume {
@@ -38,22 +38,19 @@ export default function DashboardPage() {
   const loadAllResumes = () => {
     const allResumes: DashboardResume[] = [];
 
-    // Load base resumes from profiles
-    const profiles = ProfileStorageService.getAllProfiles();
-    profiles.forEach(profile => {
-      if (profile.baseResume) {
-        allResumes.push({
-          id: `profile-${profile.id}`,
-          name: profile.baseResume.name,
-          position: profile.baseResume.position,
-          timestamp: profile.timestamp,
-          type: 'base',
-          profileId: profile.id,
-          profileName: profile.name,
-          resume: profile.baseResume
-        });
-      }
-    });
+    // Load base resume from user profile
+    const userProfile = ProfileStorageService.getProfile();
+    if (userProfile?.baseResume) {
+      allResumes.push({
+        id: 'user-base-resume',
+        name: userProfile.baseResume.name,
+        position: userProfile.baseResume.position,
+        timestamp: userProfile.timestamp,
+        type: 'base',
+        profileName: userProfile.name,
+        resume: userProfile.baseResume
+      });
+    }
 
     // Load job-specific resumes from storage
     const savedResumes = ResumeStorageService.getSavedResumesList();
@@ -83,16 +80,16 @@ export default function DashboardPage() {
     e.stopPropagation(); // Prevent navigation
 
     const message = dashboardResume.type === 'base'
-      ? 'Delete this base resume? This will remove it from the profile.'
+      ? 'Delete this base resume? This will remove it from your profile.'
       : 'Delete this job-specific resume?';
 
     if (confirm(message)) {
-      if (dashboardResume.type === 'base' && dashboardResume.profileId) {
-        // Remove base resume from profile
-        ProfileStorageService.updateProfile(dashboardResume.profileId, {
+      if (dashboardResume.type === 'base') {
+        // Remove base resume from user profile
+        ProfileStorageService.updateProfile({
           baseResume: undefined
         });
-        toast.success('Base resume removed from profile');
+        toast.success('Base resume removed from your profile');
       } else {
         // Delete job-specific resume
         ResumeStorageService.deleteResumeById(dashboardResume.id);
@@ -104,9 +101,8 @@ export default function DashboardPage() {
 
   const handleViewResume = (dashboardResume: DashboardResume) => {
     if (dashboardResume.type === 'base') {
-      // Base resumes don't have their own page, redirect to profile
-      router.push('/dashboard/profile');
-      toast.info('Base resumes are managed in the Profile section');
+      // View base resume in builder
+      router.push('/resume/base');
     } else {
       // Job-specific resumes have their own page
       router.push(`/resume/${dashboardResume.id}`);
@@ -142,7 +138,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">My Resumes</h1>
           <p className="mt-2 text-muted-foreground">
-            {resumes.length} total • {resumes.filter(r => r.type === 'base').length} base resumes • {resumes.filter(r => r.type === 'job-specific').length} job-specific
+            {resumes.length} total • {resumes.filter(r => r.type === 'base').length > 0 ? '1 base resume' : 'No base resume'} • {resumes.filter(r => r.type === 'job-specific').length} job-specific
           </p>
         </div>
         <Button onClick={() => setWizardOpen(true)} size="lg">
@@ -284,18 +280,32 @@ export default function DashboardPage() {
                   </>
                 )}
                 {resume.type === 'base' && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push('/dashboard/profile');
-                    }}
-                  >
-                    <User className="mr-2 w-3 h-3" />
-                    View Profile
-                  </Button>
+                  <>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="flex-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push('/resume/base');
+                      }}
+                    >
+                      <Eye className="mr-2 w-3 h-3" />
+                      View in Builder
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push('/dashboard/profile');
+                      }}
+                    >
+                      <User className="mr-2 w-3 h-3" />
+                      View Profile
+                    </Button>
+                  </>
                 )}
               </CardFooter>
             </Card>

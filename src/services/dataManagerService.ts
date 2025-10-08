@@ -5,8 +5,8 @@ import { validatePersonData, validateTargetJobData, createDefaultPerson, createD
 export interface DataManagerState {
   person: Person;
   targetJob: TargetJobJson;
-  resume: Resume | null;
-  includeCurrentResume: boolean;
+  baseResume: Resume | null;  // Base resume from user profile
+  resume: Resume | null;       // Currently generated resume
   isGenerating: boolean;
   error: string | null;
 }
@@ -19,8 +19,8 @@ export class DataManagerService {
     this.state = {
       person: createDefaultPerson(),
       targetJob: createDefaultTargetJob(),
+      baseResume: null,
       resume: null,
-      includeCurrentResume: false,
       isGenerating: false,
       error: null
     };
@@ -74,15 +74,15 @@ export class DataManagerService {
     this.saveToStorage();
   }
 
+  // Base resume management
+  setBaseResume(baseResume: Resume | null): void {
+    this.updateState({ baseResume });
+  }
+
   // Resume management
   setResume(resume: Resume | null): void {
     this.updateState({ resume });
     this.saveToStorage();
-  }
-
-  // Generation settings
-  setIncludeCurrentResume(include: boolean): void {
-    this.updateState({ includeCurrentResume: include });
   }
 
   // Generation state
@@ -98,16 +98,12 @@ export class DataManagerService {
   canGenerateResume(): { canGenerate: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (!validatePersonData(this.state.person)) {
-      errors.push('Person data is invalid');
+    if (!this.state.baseResume) {
+      errors.push('Base resume is required. Please create your profile first.');
     }
 
     if (!validateTargetJobData(this.state.targetJob)) {
       errors.push('Target job data is invalid');
-    }
-
-    if (this.state.includeCurrentResume && !this.state.resume) {
-      errors.push('Current resume is required when including it in generation');
     }
 
     return {
@@ -124,11 +120,13 @@ export class DataManagerService {
       return null;
     }
 
-    const currentResume = this.state.includeCurrentResume ? this.state.resume : undefined;
+    if (!this.state.baseResume) {
+      this.setError('Base resume is required');
+      return null;
+    }
 
     return {
-      person: this.state.person,
-      currentResume: currentResume || undefined,
+      baseResume: this.state.baseResume,
       targetJob: this.state.targetJob
     };
   }
@@ -147,6 +145,12 @@ export class DataManagerService {
       this.state.resume = stored.resume;
     }
 
+    // Load base resume from user profile
+    const baseResume = LocalStorageService.loadBaseResume();
+    if (baseResume) {
+      this.state.baseResume = baseResume;
+    }
+
     this.notifyListeners();
   }
 
@@ -163,8 +167,8 @@ export class DataManagerService {
     this.state = {
       person: createDefaultPerson(),
       targetJob: createDefaultTargetJob(),
+      baseResume: null,
       resume: null,
-      includeCurrentResume: false,
       isGenerating: false,
       error: null
     };
@@ -197,12 +201,12 @@ export class DataManagerService {
     return { ...this.state.targetJob };
   }
 
-  getResume(): Resume | null {
-    return this.state.resume ? { ...this.state.resume } : null;
+  getBaseResume(): Resume | null {
+    return this.state.baseResume ? { ...this.state.baseResume } : null;
   }
 
-  getIncludeCurrentResume(): boolean {
-    return this.state.includeCurrentResume;
+  getResume(): Resume | null {
+    return this.state.resume ? { ...this.state.resume } : null;
   }
 
   getIsGenerating(): boolean {
