@@ -121,14 +121,14 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="relative py-20 bg-muted/30">
-      <div className="container px-6 mx-auto">
+    <section className="relative py-12 sm:py-16 md:py-20 bg-muted/30">
+      <div className="container px-4 sm:px-6 mx-auto">
         <BlurFade delay={0.1} inView>
-          <div className="mx-auto mb-16 max-w-3xl text-center">
-            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+          <div className="mx-auto mb-10 sm:mb-12 md:mb-16 max-w-3xl text-center">
+            <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               Powerful Features
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-base sm:text-lg text-muted-foreground">
               Everything you need to create winning resumes
             </p>
           </div>

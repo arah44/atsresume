@@ -115,16 +115,16 @@ const timelineData = steps.map((step) => {
 
 export function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="relative py-20">
+    <section id="how-it-works" className="relative py-12 sm:py-16 md:py-20">
       <div className="relative">
-        <div className="container mx-auto px-6 mb-12">
+        <div className="container mx-auto px-4 sm:px-6 mb-8 sm:mb-10 md:mb-12">
           <BlurFade delay={0.1} inView>
             <div className="mx-auto max-w-3xl text-center">
               <TextGenerateEffect
                 words="How It Works"
-                className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl mb-4"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4"
               />
-              <p className="text-lg text-muted-foreground">
+              <p className="text-base sm:text-lg text-muted-foreground">
                 Three simple steps to your perfect, ATS-optimized resume
               </p>
             </div>
@@ -132,21 +132,21 @@ export function HowItWorksSection() {
         </div>
 
         {/* Timeline Component */}
-        <div className="relative">
+        <div className="relative px-4 sm:px-0">
           <Timeline data={timelineData} />
         </div>
 
         {/* CTA */}
         <BlurFade delay={0.6} inView>
-          <div className="container mx-auto px-6 mt-16 text-center">
-              <Link href="/dashboard/profile">
-                <ShimmerButton className="px-8 py-6 text-lg shadow-2xl">
+          <div className="container mx-auto px-4 sm:px-6 mt-12 sm:mt-14 md:mt-16 text-center">
+              <Link href="/dashboard/profile" className="inline-block w-full sm:w-auto">
+                <ShimmerButton className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg shadow-2xl">
                   <span className="whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10">
                     Start Building Your Resume Now
                   </span>
                 </ShimmerButton>
               </Link>
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="mt-4 text-xs sm:text-sm text-muted-foreground">
               No credit card required • Get started in 60 seconds
             </p>
           </div>

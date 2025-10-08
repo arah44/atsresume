@@ -24,13 +24,13 @@ const footerLinks = {
 export function FooterSection() {
   return (
     <footer className="border-t bg-background">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-10 md:py-12">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <FileText className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">ATSResume</span>
+              <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <span className="text-lg sm:text-xl font-bold">ATSResume</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               Create ATS-optimized resumes in minutes using AI-powered technology.

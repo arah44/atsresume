@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 export function HeroSection() {
   return (
-    <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-background py-20">
+    <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-background py-12 sm:py-20">
       {/* Background Pattern */}
       <DotPattern
         className={cn(
@@ -18,14 +18,14 @@ export function HeroSection() {
         )}
       />
 
-      <div className="container relative z-10 px-6 mx-auto">
+      <div className="container relative z-10 px-4 sm:px-6 mx-auto">
         <div className="mx-auto max-w-4xl text-center">
           {/* Badge */}
           <BlurFade delay={0.1} inView>
-            <div className="inline-flex justify-center items-center mb-8">
+            <div className="inline-flex justify-center items-center mb-6 sm:mb-8">
               <AnimatedGradientText>
-                <Sparkles className="mr-2 w-4 h-4" />
-                <span className="inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent">
+                <Sparkles className="mr-2 w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="text-sm sm:text-base inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent">
                   AI-Powered Resume Optimization
                 </span>
               </AnimatedGradientText>
@@ -34,7 +34,7 @@ export function HeroSection() {
 
           {/* Headline */}
           <BlurFade delay={0.2} inView>
-            <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            <h1 className="mb-4 sm:mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground">
               Create{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
               Job-Specific Resumes
@@ -45,7 +45,7 @@ export function HeroSection() {
 
           {/* Subheadline */}
           <BlurFade delay={0.3} inView>
-            <p className="mb-10 text-lg text-muted-foreground sm:text-xl lg:text-2xl">
+            <p className="mb-8 sm:mb-10 text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground px-4 sm:px-0">
               Build your profile once. Our AI generates perfectly tailored resumes
               for every job application. Pass ATS screening and land more interviews.
             </p>
@@ -53,32 +53,32 @@ export function HeroSection() {
 
           {/* CTAs */}
           <BlurFade delay={0.4} inView>
-            <div className="flex flex-col gap-4 justify-center items-center sm:flex-row">
-              <Link href="/dashboard/profile">
-                <ShimmerButton className="px-8 py-6 text-lg shadow-2xl">
-                  <span className="flex gap-2 items-center font-medium tracking-tight leading-none text-center text-white whitespace-pre-wrap dark:from-white dark:to-slate-900/10">
+            <div className="flex flex-col gap-3 sm:gap-4 justify-center items-stretch sm:items-center sm:flex-row px-4 sm:px-0">
+              <Link href="/dashboard/profile" className="w-full sm:w-auto">
+                <ShimmerButton className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg shadow-2xl">
+                  <span className="flex gap-2 items-center justify-center font-medium tracking-tight leading-none text-center text-white whitespace-pre-wrap dark:from-white dark:to-slate-900/10">
                     Get Started Free
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </span>
                 </ShimmerButton>
               </Link>
 
               <Link
                 href="#how-it-works"
-                className="inline-flex gap-2 items-center px-8 py-6 text-lg font-medium rounded-lg border transition-colors group border-border bg-background text-foreground hover:bg-accent"
+                className="w-full sm:w-auto inline-flex gap-2 items-center justify-center px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium rounded-lg border transition-colors group border-border bg-background text-foreground hover:bg-accent"
               >
                 See How It Works
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </BlurFade>
 
           {/* Trust Indicators */}
           <BlurFade delay={0.5} inView>
-            <div className="flex flex-wrap gap-6 justify-center items-center mt-12 text-sm text-muted-foreground">
+            <div className="flex flex-wrap gap-4 sm:gap-6 justify-center items-center mt-8 sm:mt-12 text-xs sm:text-sm text-muted-foreground px-4 sm:px-0">
               <div className="flex gap-2 items-center">
                 <svg
-                  className="w-5 h-5 text-green-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -92,7 +92,7 @@ export function HeroSection() {
               </div>
               <div className="flex gap-2 items-center">
                 <svg
-                  className="w-5 h-5 text-green-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -106,7 +106,7 @@ export function HeroSection() {
               </div>
               <div className="flex gap-2 items-center">
                 <svg
-                  className="w-5 h-5 text-green-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >

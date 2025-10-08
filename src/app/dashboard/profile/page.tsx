@@ -156,7 +156,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container p-6 mx-auto space-y-8 max-w-5xl">
+    <div className="container p-4 sm:p-6 mx-auto space-y-6 sm:space-y-8 max-w-5xl">
       {/* Error Alert */}
       {error && (
         <ErrorAlert
@@ -169,15 +169,15 @@ export default function ProfilePage() {
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
-          <p className="mt-2 text-muted-foreground">
+      <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Your Profile</h1>
+          <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             Manage your profile and base resume
           </p>
         </div>
         {profile && !isEditing && (
-          <Button onClick={() => setIsEditing(true)} size="lg">
+          <Button onClick={() => setIsEditing(true)} size="lg" className="w-full sm:w-auto">
             <Edit className="mr-2 w-4 h-4" />
             Edit Profile
           </Button>
@@ -272,21 +272,22 @@ export default function ProfilePage() {
           {profile.baseResume ? (
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="flex gap-2 items-center">
+                <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-start">
+                  <div className="min-w-0">
+                    <CardTitle className="flex gap-2 items-center text-lg sm:text-xl">
                       <FileText className="w-5 h-5" />
                       Base Resume
                     </CardTitle>
-                    <CardDescription className="mt-2">
+                    <CardDescription className="mt-2 text-sm">
                       Your base resume generated from your profile
                     </CardDescription>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <Button
                       asChild
                       variant="default"
                       size="sm"
+                      className="w-full sm:w-auto"
                     >
                       <Link href="/resume/base">
                         <Eye className="mr-2 w-4 h-4" />
@@ -298,6 +299,7 @@ export default function ProfilePage() {
                       disabled={generatingBaseResume}
                       variant="outline"
                       size="sm"
+                      className="w-full sm:w-auto"
                     >
                       <RefreshCw className={`mr-2 w-4 h-4 ${generatingBaseResume ? 'animate-spin' : ''}`} />
                       Regenerate
@@ -306,28 +308,28 @@ export default function ProfilePage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div className="text-center p-4 bg-secondary/50 rounded-lg">
                     <div className="text-2xl font-bold">{profile.baseResume.workExperience?.length || 0}</div>
-                    <div className="text-sm text-muted-foreground">Work Experience</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Work Experience</div>
                   </div>
                   <div className="text-center p-4 bg-secondary/50 rounded-lg">
                     <div className="text-2xl font-bold">{profile.baseResume.skills?.length || 0}</div>
-                    <div className="text-sm text-muted-foreground">Skills</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Skills</div>
                   </div>
                   <div className="text-center p-4 bg-secondary/50 rounded-lg">
                     <div className="text-2xl font-bold">{profile.baseResume.education?.length || 0}</div>
-                    <div className="text-sm text-muted-foreground">Education</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Education</div>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Target Position</h4>
+                  <h4 className="font-medium mb-2 text-sm sm:text-base">Target Position</h4>
                   <p className="text-sm">{profile.baseResume.position}</p>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Professional Summary</h4>
+                  <h4 className="font-medium mb-2 text-sm sm:text-base">Professional Summary</h4>
                   <p className="text-sm text-muted-foreground">{profile.baseResume.summary}</p>
                 </div>
               </CardContent>

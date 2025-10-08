@@ -8,7 +8,7 @@ import { Particles } from '@/components/ui/particles';
 
 export function CTASection() {
   return (
-    <section className="relative overflow-hidden py-20">
+    <section className="relative overflow-hidden py-12 sm:py-16 md:py-20">
       {/* Background Particles */}
       <Particles
         className="absolute inset-0"
@@ -18,37 +18,37 @@ export function CTASection() {
         refresh
       />
 
-      <div className="container relative z-10 mx-auto px-6">
+      <div className="container relative z-10 mx-auto px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <BlurFade delay={0.1} inView>
-            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               Ready to Land Your Dream Job?
             </h2>
           </BlurFade>
 
           <BlurFade delay={0.2} inView>
-            <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
+            <p className="mb-6 sm:mb-8 text-base sm:text-lg md:text-xl text-muted-foreground px-4 sm:px-0">
               Join thousands of job seekers who&apos;ve simplified their
               application process
             </p>
           </BlurFade>
 
           <BlurFade delay={0.3} inView>
-            <Link href="/dashboard/profile">
-              <ShimmerButton className="px-10 py-7 text-xl shadow-2xl">
-                <span className="flex items-center gap-2 whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10">
+            <Link href="/dashboard/profile" className="inline-block w-full sm:w-auto">
+              <ShimmerButton className="w-full sm:w-auto px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl">
+                <span className="flex items-center justify-center gap-2 whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10">
                   Create Your Profile Now
-                  <ArrowRight className="h-6 w-6" />
+                  <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" />
                 </span>
               </ShimmerButton>
             </Link>
           </BlurFade>
 
           <BlurFade delay={0.4} inView>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+            <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-muted-foreground px-4 sm:px-0">
               <div className="flex items-center gap-2">
                 <svg
-                  className="h-5 w-5 text-green-500"
+                  className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -60,10 +60,10 @@ export function CTASection() {
                 </svg>
                 <span>No credit card required</span>
               </div>
-              <span className="text-muted-foreground/50">•</span>
+              <span className="hidden sm:inline text-muted-foreground/50">•</span>
               <div className="flex items-center gap-2">
                 <svg
-                  className="h-5 w-5 text-green-500"
+                  className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -75,10 +75,10 @@ export function CTASection() {
                 </svg>
                 <span>Free to start</span>
               </div>
-              <span className="text-muted-foreground/50">•</span>
+              <span className="hidden sm:inline text-muted-foreground/50">•</span>
               <div className="flex items-center gap-2">
                 <svg
-                  className="h-5 w-5 text-green-500"
+                  className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >

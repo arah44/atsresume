@@ -19,10 +19,21 @@
 }
 
 @layer base {
+    * {
+        @apply box-border;
+    }
+
+    html {
+        @apply scroll-smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 
     body {
         @apply font-[sans-serif];
+        @apply overflow-x-hidden;
     }
+    
     textarea, input:focus {
         @apply focus:outline-none;
     }

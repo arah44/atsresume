@@ -119,16 +119,16 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="container p-6 mx-auto space-y-8">
+    <div className="container p-4 sm:p-6 mx-auto space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">My Resumes</h1>
-          <p className="mt-2 text-muted-foreground">
+      <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">My Resumes</h1>
+          <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             {resumes.length} total • {resumes.filter(r => r.type === 'base').length > 0 ? '1 base resume' : 'No base resume'} • {resumes.filter(r => r.type === 'job-specific').length} job-specific
           </p>
         </div>
-        <Button onClick={() => setWizardOpen(true)} size="lg">
+        <Button onClick={() => setWizardOpen(true)} size="lg" className="w-full sm:w-auto">
           <Plus className="mr-2 w-4 h-4" />
           Create New Resume
         </Button>
@@ -226,13 +226,13 @@ export default function DashboardPage() {
                 )}
               </CardContent>
 
-              <CardFooter className="gap-2">
+              <CardFooter className="flex-col sm:flex-row gap-2">
                 {resume.type === 'job-specific' && (
                   <>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="flex-1 w-full"
                       onClick={(e) => {
                         e.stopPropagation();
                         const url = ResumeStorageService.getResumeUrl(resume.id);
@@ -246,7 +246,7 @@ export default function DashboardPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="flex-1 w-full"
                       onClick={(e) => {
                         e.stopPropagation();
                         if (resume.resume) {
@@ -271,7 +271,7 @@ export default function DashboardPage() {
                     <Button
                       variant="default"
                       size="sm"
-                      className="flex-1"
+                      className="flex-1 w-full"
                       onClick={(e) => {
                         e.stopPropagation();
                         router.push('/resume/base');
@@ -283,7 +283,7 @@ export default function DashboardPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="flex-1 w-full"
                       onClick={(e) => {
                         e.stopPropagation();
                         router.push('/dashboard/profile');
