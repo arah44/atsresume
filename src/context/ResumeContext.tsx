@@ -19,7 +19,25 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [dataManager] = useState(() => new DataManagerService());
 
   // Legacy resume data (for backward compatibility)
-  const [resumeData, setResumeData] = useState<Resume>(DefaultResumeData);
+  const [resumeData, setResumeDataInternal] = useState<Resume>(DefaultResumeData);
+
+  // Wrapper to sync resumeData changes to localStorage (for backward compatibility with legacy storage)
+  const setResumeData = useCallback((resume: Resume | ((prev: Resume) => Resume)) => {
+    setResumeDataInternal(prev => {
+      const newResume = typeof resume === 'function' ? resume(prev) : resume;
+
+      // Also sync to legacy localStorage key (atsresume_resume)
+      // This ensures changes persist even without explicit save
+      try {
+        localStorage.setItem('atsresume_resume', JSON.stringify(newResume));
+        console.log('🔄 Auto-synced resumeData to localStorage');
+      } catch (error) {
+        console.error('Failed to sync resumeData to localStorage:', error);
+      }
+
+      return newResume;
+    });
+  }, []);
 
   // Generation state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -231,18 +249,12 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Handler for input changes (backward compatibility)
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setResumeData(prev => {
-      const updated = {
-        ...prev,
-        [name]: value
-      };
-      // Regenerate ID when resume content changes significantly
-      if (['name', 'position', 'email', 'summary'].includes(name)) {
-        return ensureResumeId(updated);
-      }
-      return updated;
-    });
-  }, []);
+    setResumeData(prev => ({
+      ...prev,
+      [name]: value
+      // Keep existing ID - never regenerate it on changes!
+    }));
+  }, [setResumeData]);
 
   // Handler for profile picture upload (backward compatibility)
   const handleProfilePicture = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

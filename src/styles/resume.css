@@ -24,21 +24,6 @@
         @apply font-[sans-serif];
     }
 
-    ::-webkit-scrollbar {
-        @apply w-2.5 h-2.5;
-    }
-
-    ::-webkit-scrollbar-track {
-        @apply bg-gray-200;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        @apply bg-fuchsia-600;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        @apply bg-fuchsia-700;
-    }
 
     textarea, input:focus {
         @apply focus:outline-none;
@@ -219,7 +204,7 @@
     }
 
     .preview::after {
-        content: "Created using https://atsresume.vercel.app/";
+        content: "Created using https://jobsly.co/";
         position: fixed;
         bottom: 0;
         right: 0;

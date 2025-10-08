@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Meta from "./meta/Meta";
@@ -8,6 +8,7 @@ import FormCloseOpenBtn from "./FormCloseOpenBtn";
 import Preview from "./preview/ui/Preview";
 import { ResumeProvider, useResumeContext } from "../context/ResumeContext";
 import { ResumeStorageService } from "../services/resumeStorage";
+import { useAutosave } from "../hooks/useAutosave";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -34,13 +35,58 @@ function BuilderContent({ initialResume }) {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [savedUrl, setSavedUrl] = useState('');
 
-  // Load initial resume if provided
+  // Load initial resume if provided - ID should already be set
   useEffect(() => {
     if (initialResume) {
+      console.log('📥 Loading resume with ID:', initialResume.id);
+
+      if (!initialResume.id) {
+        console.error('⚠️  WARNING: Resume loaded without ID!');
+      }
+
       setResumeData(initialResume);
     }
   }, [initialResume, setResumeData]);
 
+  // Autosave function - saves to the SAME ID every time
+  const handleAutosave = useCallback((data: typeof resumeData) => {
+    console.log('🎯 Autosave triggered');
+    console.log('   - Resume ID:', data.id);
+    console.log('   - Name:', data.name);
+
+    if (!data.id) {
+      console.error('❌ Cannot autosave: Resume has no ID!');
+      throw new Error('Resume must have an ID to autosave');
+    }
+
+    try {
+      // saveResumeById handles both regular and base resumes
+      // It will OVERWRITE the existing resume based on ID
+      const savedId = ResumeStorageService.saveResumeById(data);
+
+      if (savedId === data.id) {
+        console.log('✅ Autosaved successfully to:', savedId);
+      } else {
+        console.error('❌ ID MISMATCH after save!');
+        console.error('   - Expected:', data.id);
+        console.error('   - Got:', savedId);
+      }
+    } catch (error) {
+      console.error('❌ Autosave failed:', error);
+      throw error;
+    }
+  }, []);
+
+  // Setup autosave with 4 second debounce
+  console.log('🔧 Setting up autosave in BuilderContent');
+  useAutosave({
+    data: resumeData,
+    onSave: handleAutosave,
+    delay: 4000,
+    enabled: true,
+  });
+
+  // Manual save (shows modal with shareable link)
   const handleSaveResume = () => {
     try {
       const savedId = ResumeStorageService.saveResumeById(resumeData);
@@ -110,15 +156,16 @@ function BuilderContent({ initialResume }) {
 
       {/* Action Buttons */}
       <FormCloseOpenBtn formClose={formClose} setFormClose={setFormClose}/>
-      <Button
-        aria-label="Save Resume"
+      {/* <Button
+        aria-label="Save & Share Resume"
         onClick={handleSaveResume}
         className="fixed bottom-5 right-10 font-bold shadow-lg exclude-print"
         size="lg"
+        title="Get shareable link"
       >
-        <Save className="w-5 h-5 mr-2" />
-        Save Resume
-      </Button>
+        <Save className="mr-2 w-5 h-5" />
+        Save & Share
+      </Button> */}
 
       <Print/>
     </>

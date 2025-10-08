@@ -35,7 +35,7 @@ export function HeroSection() {
           {/* Headline */}
           <BlurFade delay={0.2} inView>
             <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-              Create {' '}
+              Create{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
               Job-Specific Resumes
               </span>{' '}
@@ -46,8 +46,8 @@ export function HeroSection() {
           {/* Subheadline */}
           <BlurFade delay={0.3} inView>
             <p className="mb-10 text-lg text-muted-foreground sm:text-xl lg:text-2xl">
-              Build a base profile once, generate tailored resumes for every job
-              application using AI. Pass ATS screening and land more interviews.
+              Build your profile once. Our AI generates perfectly tailored resumes
+              for every job application. Pass ATS screening and land more interviews.
             </p>
           </BlurFade>
 
@@ -102,7 +102,7 @@ export function HeroSection() {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Free to start</span>
+                <span>AI-powered optimization</span>
               </div>
               <div className="flex gap-2 items-center">
                 <svg

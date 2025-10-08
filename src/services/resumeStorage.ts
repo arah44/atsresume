@@ -1,8 +1,10 @@
 import { Resume } from '../types';
 import { ensureResumeId, isValidResumeId } from '../utils/resumeHash';
+import { ProfileStorageService } from './profileStorage';
 
 const STORAGE_PREFIX = 'resume-';
 const RESUME_LIST_KEY = 'resumes-list';
+const BASE_RESUME_ID = 'base-resume';
 
 /**
  * Service for saving and loading resumes by UUID
@@ -15,14 +17,28 @@ const RESUME_LIST_KEY = 'resumes-list';
 export class ResumeStorageService {
   /**
    * Save a resume with UUID to localStorage (cache-like structure)
+   * Special case: 'base-resume' saves to profile
    */
   static saveResumeById(resume: Resume): string {
     try {
-      // Ensure resume has a UUID
-      const resumeWithId = ensureResumeId(resume);
+      // Ensure resume has a UUID (or use existing ID)
+      const resumeWithId = resume.id ? resume : ensureResumeId(resume);
       const id = resumeWithId.id!;
 
-      // Save the resume directly (matching cache structure - no wrapper)
+      // Special case: base-resume saves to profile
+      if (id === BASE_RESUME_ID) {
+        console.log('📋 Saving base resume to profile');
+        ProfileStorageService.updateProfile({ baseResume: resumeWithId });
+        // Also save to regular storage for consistency
+        localStorage.setItem(
+          `${STORAGE_PREFIX}${id}`,
+          JSON.stringify(resumeWithId, null, 2)
+        );
+        console.log(`✅ Base resume saved`);
+        return id;
+      }
+
+      // Regular resumes: save to localStorage
       localStorage.setItem(
         `${STORAGE_PREFIX}${id}`,
         JSON.stringify(resumeWithId, null, 2)
@@ -41,9 +57,22 @@ export class ResumeStorageService {
 
   /**
    * Load a resume by UUID from localStorage
+   * Special case: 'base-resume' loads from profile
    */
   static loadResumeById(id: string): Resume | null {
     try {
+      // Special case: base-resume loads from profile
+      if (id === BASE_RESUME_ID) {
+        console.log('📋 Loading base resume from profile');
+        const profile = ProfileStorageService.getProfile();
+        if (!profile?.baseResume) {
+          console.error('❌ No base resume found in profile');
+          return null;
+        }
+        return { ...profile.baseResume, id: BASE_RESUME_ID };
+      }
+
+      // Regular resumes: validate UUID format
       if (!isValidResumeId(id)) {
         console.error('❌ Invalid resume UUID format:', id);
         return null;

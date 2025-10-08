@@ -55,15 +55,15 @@ export type Project = z.infer<typeof projectSchema>;
 // Schema for skill category
 export const skillCategorySchema = z.object({
   title: z.string().describe("Category title (e.g., 'Technical Skills', 'Frameworks & Libraries')"),
-  skills: z.array(z.string()).min(3).describe("Array of skills in this category (minimum 3)")
+  skills: z.array(z.string()).min(1).describe("Array of skills in this category (at least 1, preferably 3+)")
 });
 
 export type SkillCategory = z.infer<typeof skillCategorySchema>;
 
 // Schema for skills optimization output
 export const skillsOptimizationSchema = z.array(skillCategorySchema)
-  .min(2)
-  .describe("Array of skill categories with at least 2 categories");
+  .min(1)
+  .describe("Array of skill categories (at least 1, preferably 2+)");
 
 export type SkillsOptimization = z.infer<typeof skillsOptimizationSchema>;
 
@@ -109,7 +109,7 @@ export const profileToBaseResumeSchema = z.object({
   workExperience: z.array(workExperienceSchema).min(1).describe("Array of work experience entries (minimum 1)"),
   education: z.array(educationSchema).describe("Array of education entries"),
   projects: z.array(projectSchema).describe("Array of project entries"),
-  skills: z.array(skillCategorySchema).min(2).describe("Array of skill categories (minimum 2)"),
+  skills: z.array(skillCategorySchema).min(1).describe("Array of skill categories (at least 1 category with skills)"),
   languages: z.array(z.string()).describe("Array of languages"),
   certifications: z.array(z.string()).describe("Array of certifications")
 });

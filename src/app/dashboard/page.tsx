@@ -28,7 +28,6 @@ interface DashboardResume {
 export default function DashboardPage() {
   const router = useRouter();
   const [resumes, setResumes] = useState<DashboardResume[]>([]);
-  const [loading, setLoading] = useState(true);
   const [wizardOpen, setWizardOpen] = useState(false);
 
   useEffect(() => {
@@ -73,7 +72,6 @@ export default function DashboardPage() {
     allResumes.sort((a, b) => b.timestamp - a.timestamp);
 
     setResumes(allResumes);
-    setLoading(false);
   };
 
   const handleDeleteResume = (dashboardResume: DashboardResume, e: React.MouseEvent) => {
@@ -119,17 +117,6 @@ export default function DashboardPage() {
       minute: '2-digit'
     });
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="space-y-4 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full border-b-2 animate-spin border-primary"></div>
-          <p className="text-muted-foreground">Loading resumes...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container p-6 mx-auto space-y-8">

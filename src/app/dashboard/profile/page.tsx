@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ErrorAlert } from '@/components/ui/error-alert';
+import { parseErrorMessage } from '@/utils/errorHandling';
 import { toast } from 'sonner';
 import { User, Clock, Loader2, FileText, Edit, RefreshCw, Eye } from 'lucide-react';
 import Link from 'next/link';
@@ -18,6 +20,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [generatingBaseResume, setGeneratingBaseResume] = useState(false);
+  const [error, setError] = useState<ReturnType<typeof parseErrorMessage> | null>(null);
 
   useEffect(() => {
     loadProfile();
@@ -36,6 +39,7 @@ export default function ProfilePage() {
 
   const handleSaveOrUpdate = async (data: Person) => {
     setGeneratingBaseResume(true);
+    setError(null);
 
     try {
       console.log('📝 Starting profile save/update...');
@@ -80,11 +84,16 @@ export default function ProfilePage() {
       }
 
       toast.success('✅ Profile and base resume saved successfully!');
+      setError(null);
       setIsEditing(false);
       loadProfile();
-    } catch (error) {
-      console.error('❌ FAILED to save profile with base resume:', error);
-      toast.error(`Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (err) {
+      console.error('❌ FAILED to save profile with base resume:', err);
+      const parsedError = parseErrorMessage(err);
+      setError(parsedError);
+      toast.error(parsedError.message);
+      // Scroll to top to show error
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setGeneratingBaseResume(false);
     }
@@ -94,6 +103,7 @@ export default function ProfilePage() {
     if (!profile) return;
 
     setGeneratingBaseResume(true);
+    setError(null);
 
     try {
       toast.info('Regenerating base resume...');
@@ -106,10 +116,14 @@ export default function ProfilePage() {
       ProfileStorageService.updateProfile({ baseResume });
 
       toast.success('Base resume regenerated successfully!');
+      setError(null);
       loadProfile();
-    } catch (error) {
-      console.error('❌ FAILED to regenerate base resume:', error);
-      toast.error(`Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (err) {
+      console.error('❌ FAILED to regenerate base resume:', err);
+      const parsedError = parseErrorMessage(err);
+      setError(parsedError);
+      toast.error(parsedError.message);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setGeneratingBaseResume(false);
     }
@@ -143,6 +157,17 @@ export default function ProfilePage() {
 
   return (
     <div className="container p-6 mx-auto space-y-8 max-w-5xl">
+      {/* Error Alert */}
+      {error && (
+        <ErrorAlert
+          title={error.title}
+          message={error.message}
+          suggestion={error.suggestion}
+          technicalDetails={error.technicalDetails}
+          onDismiss={() => setError(null)}
+        />
+      )}
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

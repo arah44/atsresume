@@ -1,6 +1,47 @@
 # ATSResume
 
-A cutting-edge resume builder that helps job seekers create a professional, ATS-friendly resume in minutes. Our platform uses the latest technology to analyze and optimize your resume for maximum visibility and success with applicant tracking systems. Say goodbye to frustration and wasted time spent on manual resume formatting. Create your winning resume with ATSResume today and get noticed by employers.
+A cutting-edge AI-powered resume builder that helps job seekers create tailored, ATS-optimized resumes for every job application. Upload your resume or paste your content once, then generate customized versions for each role using advanced AI.
+
+## Features
+
+- 🤖 **AI-Powered Resume Generation** - Automatically structure and optimize your resume
+- 📄 **PDF Upload Support** - Upload your existing resume and let AI extract everything
+- 🎯 **Job-Specific Tailoring** - Generate customized resumes for each job posting
+- ✅ **ATS-Optimized** - Pass applicant tracking systems with keyword optimization
+- 🚀 **Fast & Easy** - Create your profile once, generate unlimited tailored resumes
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```bash
+# OpenRouter API Key (for resume generation)
+OPENROUTER_API_KEY=your_openrouter_key_here
+
+# OpenAI API Key (for PDF parsing)
+OPENAI_API_KEY=your_openai_key_here
+```
+
+### Getting API Keys
+
+- **OpenRouter**: Get your key at [https://openrouter.ai/keys](https://openrouter.ai/keys)
+- **OpenAI**: Get your key at [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+
+## Quick Start
+
+```bash
+# Install dependencies
+bun install
+
+# Add environment variables
+cp .env.example .env
+# Edit .env and add your API keys
+
+# Run development server
+bun run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) and start building!
 
 ## Demo
 
@@ -95,7 +136,7 @@ Description optional
 
 ## How to Add Key Achievements
 
-Key achievements are the most important part of your resume. 
+Key achievements are the most important part of your resume.
 
 - Add key achievements to your resume to make it more attractive and increase your chances of getting noticed by employers.
 - Add key achievements to your work experience and projects.

@@ -31,7 +31,10 @@ export default function ResumePage() {
       return;
     }
 
-    if (!isValidResumeId(id)) {
+    // Special case: 'base-resume' is always valid
+    const isBaseResume = id === 'base-resume';
+
+    if (!isBaseResume && !isValidResumeId(id)) {
       setError('Invalid resume ID format');
       setLoading(false);
       return;
@@ -49,6 +52,14 @@ export default function ResumePage() {
     localStorage.setItem('atsresume_resume', JSON.stringify(loadedResume));
     localStorage.setItem('atsresume_editing_id', id);
 
+    // Mark if we're editing the base resume
+    if (isBaseResume) {
+      localStorage.setItem('atsresume_editing_base', 'true');
+    } else {
+      localStorage.removeItem('atsresume_editing_base');
+    }
+
+    console.log('📝 Loaded resume:', id, isBaseResume ? '(BASE RESUME)' : '');
     setResume(loadedResume);
     setLoading(false);
   }, [id]);
