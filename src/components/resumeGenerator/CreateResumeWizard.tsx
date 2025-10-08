@@ -83,7 +83,10 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
         company: jobData.company,
         url: jobData.url || '',
         description: jobData.description || '',
-        raw_content: jobData.raw_content
+        raw_content: jobData.raw_content,
+        apply_url: jobData.apply_url,
+        is_easy_apply: jobData.is_easy_apply,
+        remote_allowed: jobData.remote_allowed
       };
 
       // Update progress for UI feedback

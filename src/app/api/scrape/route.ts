@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { JobScraper, ScrapeResult } from '@/services/jobScraper';
+import { ScrapeResult } from '@/services/jobScraper';
+import { getMultipleJobDetails } from '@/services/ghostgenius/get-job-details';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -62,8 +63,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔍 Starting scrape for ${urls.length} URL(s)`);
 
-    // Scrape all URLs
-    const results = await JobScraper.scrapeMultipleJobs(urls);
+    // Fetch job details (uses GhostGenius API for LinkedIn, scraper for others)
+    const results = await getMultipleJobDetails(urls);
 
     // Calculate summary
     const summary = {
@@ -111,7 +112,7 @@ export async function GET() {
       }
     },
     supportedJobBoards: [
-      'LinkedIn',
+      'LinkedIn (via GhostGenius API)',
       'Indeed',
       'Glassdoor',
       'Monster',

@@ -12,7 +12,10 @@ export const targetJobSchema = z.object({
   url: z.string().optional(),
   company: z.string().min(1, 'Company name is required'),
   description: z.string().min(1, 'Description is required'),
-  raw_content: z.string().min(1, 'Raw content is required')
+  raw_content: z.string().min(1, 'Raw content is required'),
+  apply_url: z.string().optional(),
+  is_easy_apply: z.boolean().optional(),
+  remote_allowed: z.boolean().optional()
 });
 
 // Validation functions

@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from 'sonner';
 import { Plus, Briefcase, Trash2, Edit, Clock, Building2, ExternalLink, MoreVertical, FileText, Link2, Loader2, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 interface JobGenerationState {
   jobId: string;
@@ -161,7 +162,10 @@ export default function JobsPage() {
         company: job.company,
         url: job.url,
         description: job.description,
-        raw_content: job.raw_content
+        raw_content: job.raw_content,
+        apply_url: job.apply_url,
+        is_easy_apply: job.is_easy_apply,
+        remote_allowed: job.remote_allowed
       };
 
       const result = await generateResumeAction({
@@ -294,132 +298,142 @@ export default function JobsPage() {
             const isGenerating = !!generationState;
 
             return (
-              <Card key={job.id} className={isGenerating ? 'border-primary' : ''}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 space-y-1.5 min-w-0">
-                      <div className="flex flex-wrap gap-2 items-center">
-                        <CardTitle className="text-base md:text-lg truncate">{job.name}</CardTitle>
-                        {isGenerating && (
-                          <Badge variant="default" className="shrink-0">
-                            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                            <span className="text-xs">Generating</span>
-                          </Badge>
-                        )}
-                        {!isGenerating && hasResume && (
-                          <Badge variant="secondary" className="shrink-0">
-                            <CheckCircle className="mr-1 h-3 w-3" />
-                            <span className="text-xs">Ready</span>
-                          </Badge>
-                        )}
+              <Link key={job.id} href={`/dashboard/jobs/${job.id}`} className="block">
+                <Card
+                  className={`cursor-pointer transition-all hover:shadow-md ${isGenerating ? 'border-primary' : ''}`}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 space-y-1.5 min-w-0">
+                        <div className="flex flex-wrap gap-2 items-center">
+                          <CardTitle className="text-base md:text-lg truncate">{job.name}</CardTitle>
+                          {isGenerating && (
+                            <Badge variant="default" className="shrink-0">
+                              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                              <span className="text-xs">Generating</span>
+                            </Badge>
+                          )}
+                          {!isGenerating && hasResume && (
+                            <Badge variant="secondary" className="shrink-0">
+                              <CheckCircle className="mr-1 h-3 w-3" />
+                              <span className="text-xs">Ready</span>
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex gap-1.5 items-center">
+                          <Building2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <CardDescription className="text-sm truncate">
+                            {job.company}
+                          </CardDescription>
+                        </div>
                       </div>
-                      <div className="flex gap-1.5 items-center">
-                        <Building2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <CardDescription className="text-sm truncate">
-                          {job.company}
-                        </CardDescription>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild disabled={isGenerating}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 shrink-0"
+                            onClick={(e) => e.preventDefault()}
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" onClick={(e) => e.preventDefault()}>
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={(e) => { e.preventDefault(); setEditingJob(job); }}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Job Info
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={(e) => { e.preventDefault(); handleDelete(job.id); }}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Job
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild disabled={isGenerating}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
-                          <MoreVertical className="h-4 w-4" />
-                          <span className="sr-only">Open menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => setEditingJob(job)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit Job Info
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(job.id)}
-                          className="text-destructive focus:text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete Job
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </CardHeader>
+                  </CardHeader>
 
-                <CardContent className="space-y-3 pb-3">
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {job.description}
-                  </p>
+                  <CardContent className="space-y-3 pb-3">
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {job.description}
+                    </p>
 
-                  {job.url && (
-                    <a
-                      href={job.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex gap-1.5 items-center text-sm text-primary hover:underline"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                      View Posting
-                    </a>
-                  )}
+                    {job.url && (
+                      <a
+                        href={job.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex gap-1.5 items-center text-sm text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        View Posting
+                      </a>
+                    )}
 
-                  <div className="flex gap-1.5 items-center text-xs md:text-sm text-muted-foreground">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span className="truncate">{formatDate(job.timestamp)}</span>
-                  </div>
-
-                  {/* Generation Progress */}
-                  {isGenerating && generationState && (
-                    <div className="space-y-2 pt-3 border-t">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs md:text-sm font-medium text-primary line-clamp-1 flex-1">
-                          {generationState.currentStep}
-                        </span>
-                        <span className="text-xs md:text-sm text-muted-foreground shrink-0">
-                          {generationState.progress}%
-                        </span>
-                      </div>
-                      <Progress value={generationState.progress} className="h-2" />
+                    <div className="flex gap-1.5 items-center text-xs md:text-sm text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span className="truncate">{formatDate(job.timestamp)}</span>
                     </div>
-                  )}
-                </CardContent>
 
-                <CardFooter className="pt-3">
-                  {isGenerating ? (
-                    <Button
-                      variant="outline"
-                      size="default"
-                      className="w-full"
-                      disabled
-                    >
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      <span className="text-sm">Generating...</span>
-                    </Button>
-                  ) : hasResume ? (
-                    <Button
-                      variant="default"
-                      size="default"
-                      className="w-full"
-                      onClick={() => handleViewResume(job)}
-                    >
-                      <FileText className="mr-2 h-4 w-4" />
-                      View Resume
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      size="default"
-                      className="w-full"
-                      onClick={() => handleGenerateResume(job)}
-                    >
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Generate Resume
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
+                    {/* Generation Progress */}
+                    {isGenerating && generationState && (
+                      <div className="space-y-2 pt-3 border-t">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs md:text-sm font-medium text-primary line-clamp-1 flex-1">
+                            {generationState.currentStep}
+                          </span>
+                          <span className="text-xs md:text-sm text-muted-foreground shrink-0">
+                            {generationState.progress}%
+                          </span>
+                        </div>
+                        <Progress value={generationState.progress} className="h-2" />
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="pt-3">
+                    {isGenerating ? (
+                      <Button
+                        variant="outline"
+                        size="default"
+                        className="w-full"
+                        disabled
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span className="text-sm">Generating...</span>
+                      </Button>
+                    ) : hasResume ? (
+                      <Button
+                        variant="default"
+                        size="default"
+                        className="w-full"
+                        onClick={(e) => { e.preventDefault(); handleViewResume(job); }}
+                      >
+                        <FileText className="mr-2 h-4 w-4" />
+                        View Resume
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="default"
+                        className="w-full"
+                        onClick={(e) => { e.preventDefault(); handleGenerateResume(job); }}
+                      >
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Generate Resume
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </Link>
             );
           })}
         </div>

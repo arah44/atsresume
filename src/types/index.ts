@@ -38,7 +38,45 @@ export interface SkillCategory {
 export interface Person {
   name: string;
   raw_content: string;
+  email?: string;
+  phone?: string;
+  additional_details?: ApplicationDetail[];
+}
 
+// Application-related types
+export interface ApplicationDetail {
+  question: string;
+  answer: string;
+  field_type?: 'text' | 'select' | 'boolean' | 'date' | 'number';
+  timestamp: number;
+}
+
+export interface JobApplication {
+  id: string;
+  job_id: string;
+  status: 'pending' | 'filling' | 'preview' | 'submitting' | 'submitted' | 'failed';
+  filled_data: ApplicationFormData;
+  preview_data?: ApplicationPreview;
+  submitted_at?: number;
+  error?: string;
+  timestamp: number;
+}
+
+export interface ApplicationFormData {
+  [key: string]: string | boolean | string[];
+}
+
+export interface ApplicationPreview {
+  fields: PreviewField[];
+  screenshot?: string;
+  form_action_url?: string;
+}
+
+export interface PreviewField {
+  label: string;
+  value: string | boolean | string[];
+  field_type: string;
+  confidence: 'high' | 'medium' | 'low';
 }
 
 // Target job data structure (job posting details)
@@ -48,6 +86,9 @@ export interface TargetJobJson {
   company: string;
   description: string;
   raw_content: string;
+  apply_url?: string;
+  is_easy_apply?: boolean;
+  remote_allowed?: boolean;
 }
 
 export interface CustomSection {

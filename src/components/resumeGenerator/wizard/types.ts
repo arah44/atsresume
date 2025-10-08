@@ -6,7 +6,10 @@ export const jobSchema = z.object({
   company: z.string().min(1, 'Company name is required'),
   url: z.string().optional().or(z.literal('')),
   description: z.string().optional().or(z.literal('')),
-  raw_content: z.string().min(10, 'Job content is required')
+  raw_content: z.string().min(10, 'Job content is required'),
+  apply_url: z.string().optional(),
+  is_easy_apply: z.boolean().optional(),
+  remote_allowed: z.boolean().optional()
 });
 
 export type JobFormData = z.infer<typeof jobSchema>;

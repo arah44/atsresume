@@ -17,12 +17,18 @@ export class JobDataParser {
     // Extract job description
     const jobDescription = this.extractJobDescription(cleanedContent);
     
+    // Try to detect if the job allows remote work
+    const remoteAllowed = this.detectRemoteWork(cleanedContent);
+    
     return {
       name: jobTitle,
       company: companyName,
       url: url,
       description: jobDescription,
-      raw_content: rawContent
+      raw_content: rawContent,
+      // New optional fields - these will be undefined if not detected
+      remote_allowed: remoteAllowed
+      // apply_url and is_easy_apply are not available from scraped content
     };
   }
 
@@ -173,6 +179,55 @@ export class JobDataParser {
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  /**
+   * Detect if the job allows remote work from the content
+   */
+  private static detectRemoteWork(content: string): boolean | undefined {
+    const lowerContent = content.toLowerCase();
+    
+    // Strong indicators for remote work
+    const remoteKeywords = [
+      'remote',
+      'work from home',
+      'wfh',
+      'telecommute',
+      'distributed team',
+      'remote-first',
+      'fully remote',
+      '100% remote',
+      'remote-friendly',
+      'work remotely',
+      'location: remote',
+      'remote position'
+    ];
+
+    // Check for remote indicators
+    const hasRemoteKeyword = remoteKeywords.some(keyword => lowerContent.includes(keyword));
+    
+    // Strong indicators against remote work
+    const onSiteKeywords = [
+      'on-site only',
+      'in-office',
+      'no remote',
+      'office-based',
+      'must be local',
+      'must be in'
+    ];
+    
+    const hasOnSiteKeyword = onSiteKeywords.some(keyword => lowerContent.includes(keyword));
+    
+    // Return true if remote found and no on-site restrictions
+    // Return false if on-site only
+    // Return undefined if unclear
+    if (hasRemoteKeyword && !hasOnSiteKeyword) {
+      return true;
+    } else if (hasOnSiteKeyword) {
+      return false;
+    }
+    
+    return undefined; // Unable to determine
   }
 
   /**

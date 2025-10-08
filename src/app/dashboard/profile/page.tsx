@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { ProfileStorageService, UserProfile } from '@/services/profileStorage';
-import { Person } from '@/types';
+import { Person, ApplicationDetail } from '@/types';
 import { PersonForm } from '@/components/resumeGenerator/forms/PersonForm';
 import { generateBaseResumeAction } from '@/app/actions/resumeGeneration';
+import { AddDetailDialog } from '@/components/profile/AddDetailDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ErrorAlert } from '@/components/ui/error-alert';
 import { parseErrorMessage } from '@/utils/errorHandling';
 import { toast } from 'sonner';
-import { User, Clock, Loader2, FileText, Edit, RefreshCw, Eye } from 'lucide-react';
+import { User, Clock, Loader2, FileText, Edit, RefreshCw, Eye, X, HelpCircle, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProfilePage() {
@@ -21,6 +22,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [generatingBaseResume, setGeneratingBaseResume] = useState(false);
   const [error, setError] = useState<ReturnType<typeof parseErrorMessage> | null>(null);
+  const [showAddDetailDialog, setShowAddDetailDialog] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -127,6 +129,32 @@ export default function ProfilePage() {
     } finally {
       setGeneratingBaseResume(false);
     }
+  };
+
+  const handleRemoveDetail = (index: number) => {
+    if (!profile) return;
+
+    const updatedDetails = profile.additional_details?.filter((_, i) => i !== index) || [];
+
+    ProfileStorageService.updateProfile({
+      additional_details: updatedDetails
+    });
+
+    toast.success('Detail removed successfully');
+    loadProfile();
+  };
+
+  const handleAddDetail = (detail: ApplicationDetail) => {
+    if (!profile) return;
+
+    const updatedDetails = [...(profile.additional_details || []), detail];
+
+    ProfileStorageService.updateProfile({
+      additional_details: updatedDetails
+    });
+
+    toast.success('Detail added successfully');
+    loadProfile();
   };
 
   const formatDate = (timestamp: number) => {
@@ -237,38 +265,7 @@ export default function ProfilePage() {
       {/* Profile Display */}
       {profile && !isEditing ? (
         <>
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-2xl">{profile.name}</CardTitle>
-                  <CardDescription className="flex gap-2 items-center mt-2">
-                    <Clock className="w-4 h-4" />
-                    <span>Last updated: {formatDate(profile.metadata?.lastUpdated || profile.timestamp)}</span>
-                  </CardDescription>
-                </div>
-                <Badge variant="secondary">
-                  Version {profile.metadata?.version || 1}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2">Profile Content</h4>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                  {profile.raw_content}
-                </p>
-              </div>
-              {profile.metadata?.notes && (
-                <div>
-                  <h4 className="font-medium mb-2">Notes</h4>
-                  <p className="text-sm text-muted-foreground">{profile.metadata.notes}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Base Resume Display */}
+          {/* Base Resume Display - Moved to top */}
           {profile.baseResume ? (
             <Card>
               <CardHeader>
@@ -341,6 +338,124 @@ export default function ProfilePage() {
               </AlertDescription>
             </Alert>
           )}
+
+          {/* Profile Content Card */}
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-2xl">{profile.name}</CardTitle>
+                  <CardDescription className="flex gap-2 items-center mt-2">
+                    <Clock className="w-4 h-4" />
+                    <span>Last updated: {formatDate(profile.metadata?.lastUpdated || profile.timestamp)}</span>
+                  </CardDescription>
+                </div>
+                <Badge variant="secondary">
+                  Version {profile.metadata?.version || 1}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Profile Content</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {profile.raw_content}
+                </p>
+              </div>
+              {profile.metadata?.notes && (
+                <div>
+                  <h4 className="font-medium mb-2">Notes</h4>
+                  <p className="text-sm text-muted-foreground">{profile.metadata.notes}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Additional Details / Saved Answers */}
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-start">
+                <div className="flex gap-2 items-start">
+                  <HelpCircle className="w-5 h-5 mt-0.5" />
+                  <div>
+                    <CardTitle className="text-lg sm:text-xl">Saved Application Answers</CardTitle>
+                    <CardDescription className="mt-1">
+                      Answers saved from job applications. These will be auto-filled in future applications.
+                    </CardDescription>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setShowAddDetailDialog(true)}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Detail
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {profile.additional_details && profile.additional_details.length > 0 ? (
+                <div className="space-y-2">
+                  {profile.additional_details.map((detail, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start justify-between gap-4 p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium mb-1">{detail.question}</p>
+                        <p className="text-sm text-muted-foreground break-words">
+                          {typeof detail.answer === 'boolean'
+                            ? detail.answer ? 'Yes' : 'No'
+                            : detail.answer}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge variant="outline" className="text-xs">
+                            {detail.field_type || 'text'}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(detail.timestamp).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveDetail(index)}
+                        className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Remove this answer"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <HelpCircle className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
+                  <p className="text-sm text-muted-foreground mb-4">
+                    No saved answers yet. Add details manually or they&apos;ll be saved automatically when you use auto-apply.
+                  </p>
+                  <Button
+                    onClick={() => setShowAddDetailDialog(true)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Your First Detail
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Add Detail Dialog */}
+          <AddDetailDialog
+            open={showAddDetailDialog}
+            onOpenChange={setShowAddDetailDialog}
+            onAdd={handleAddDetail}
+          />
         </>
       ) : null}
     </div>
