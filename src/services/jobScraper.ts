@@ -8,12 +8,27 @@ export interface ScrapeResult {
   url: string;
 }
 
+class Scraper {
+  async getPageContent(url: string): Promise<string> {
+    const proxyUrl = `https://r.jina.ai/${url}`;
+    const response = await fetch(proxyUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+    return response.text();
+  }
+}
+
 export class JobScraper {
+
+
   /**
    * Scrape a single job posting from a URL
    */
   static async scrapeJob(url: string): Promise<ScrapeResult> {
     try {
+
       // Validate URL
       if (!url || !this.isValidUrl(url)) {
         return {
@@ -23,28 +38,23 @@ export class JobScraper {
         };
       }
 
-      // Fetch the page content
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-      });
+      const scraper = new Scraper();
 
-      if (!response.ok) {
+      // Fetch the page content
+      const mdContent = await scraper.getPageContent(url);
+
+      if (!mdContent) {
         return {
           success: false,
-          error: `Failed to fetch: ${response.status} ${response.statusText}`,
+          error: `Failed to fetch: ${url} - ${mdContent}`,
           url
         };
       }
 
-      const html = await response.text();
 
-      // Extract text content from HTML
-      const textContent = this.extractTextFromHtml(html);
 
       // Parse the job data
-      const parsedData = JobDataParser.parseRawJobData(textContent, url);
+      const parsedData = JobDataParser.parseRawJobData(mdContent, url);
 
       // Validate the parsed data
       if (!JobDataParser.validateParsedData(parsedData)) {
