@@ -5,7 +5,6 @@ import Link from "next/link"
 import {
   LayoutDashboardIcon,
   HelpCircleIcon,
-  HomeIcon,
   SparklesIcon,
   UserIcon,
   BriefcaseIcon,
@@ -26,42 +25,55 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
+import { useSession } from "@/lib/auth-client"
+import { UserProfile } from "@/services/repositories/ProfileRepository"
+import { SavedJob } from "@/services/repositories/JobRepository"
 
-const data = {
-  user: {
-    name: "Resume Builder",
-    email: "user@atsresume.com",
-    avatar: "/assets/logo.png",
+const navMain = [
+  {
+    title: "My Resumes",
+    url: "/dashboard",
+    icon: LayoutDashboardIcon,
   },
-  navMain: [
+  {
+    title: "Profiles",
+    url: "/dashboard/profile",
+    icon: UserIcon,
+  },
+  {
+    title: "Jobs",
+    url: "/dashboard/jobs",
+    icon: BriefcaseIcon,
+  },
+];
 
-    {
-      title: "My Resumes",
-      url: "/dashboard",
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Profiles",
-      url: "/dashboard/profile",
-      icon: UserIcon,
-    },
-    {
-      title: "Jobs",
-      url: "/dashboard/jobs",
-      icon: BriefcaseIcon,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Help & Guide",
-      url: "#",
-      icon: HelpCircleIcon,
-    },
-  ],
+const navSecondary = [
+  {
+    title: "Help & Guide",
+    url: "#",
+    icon: HelpCircleIcon,
+  },
+];
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  initialProfile: UserProfile | null
+  initialJobs: SavedJob[]
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ initialProfile, initialJobs, ...props }: AppSidebarProps) {
   const [isWizardOpen, setIsWizardOpen] = React.useState(false)
+  const { data: session, isPending } = useSession()
+
+  // Get user display data from session
+  const userData = session?.user ? {
+    name: session.user.name || 'User',
+    email: session.user.email,
+    avatar: session.user.image || '/assets/logo.png',
+  } : {
+    name: 'Guest',
+    email: 'guest@atsresume.com',
+    avatar: '/assets/logo.png',
+  }
 
   return (
     <>
@@ -87,6 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               onClick={() => setIsWizardOpen(true)}
               className="gap-2 w-full"
               size="sm"
+              disabled={isPending}
             >
               <PlusIcon className="w-4 h-4" />
               Create New Resume
@@ -94,11 +107,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
         </SidebarHeader>
         <SidebarContent>
-          <NavMain items={data.navMain} />
-          <NavSecondary items={data.navSecondary} className="mt-auto" />
+          <NavMain items={navMain} />
+          <NavSecondary items={navSecondary} className="mt-auto" />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser user={userData} />
         </SidebarFooter>
       </Sidebar>
 
@@ -106,6 +119,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <CreateResumeWizard
         open={isWizardOpen}
         onOpenChange={setIsWizardOpen}
+        initialProfile={initialProfile}
+        initialJobs={initialJobs}
       />
     </>
   )

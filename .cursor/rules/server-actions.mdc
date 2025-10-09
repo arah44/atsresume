@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+
+Server actions are used to perform mutations.
+
+Fetching data is done in server components or api routes.

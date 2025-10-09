@@ -3,7 +3,7 @@
  * Follows DRY principles by centralizing field mapping logic
  */
 
-import { UserProfile } from '@/services/profileStorage';
+import type { UserProfile } from '@/services/repositories';
 import { Resume, ApplicationDetail } from '@/types';
 
 export interface UserData {

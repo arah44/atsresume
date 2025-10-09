@@ -3,10 +3,9 @@
 import { extractPersonFromPdf } from '@/services/openai/pdfParser';
 import { Person } from '@/types';
 import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+import { getStorageService } from '@/services/storage';
 
-const CACHE_DIR = path.join(process.cwd(), 'data', 'cache');
+const storage = getStorageService();
 
 /**
  * Server action: Extract resume data from PDF using OpenAI Responses API
@@ -33,12 +32,12 @@ export async function extractResumeFromPdf(
     // Generate cache key
     const hash = crypto.createHash('md5').update(base64Pdf).digest('hex');
     const cacheKey = `pdf-extract-${hash}`;
-    const cacheFile = path.join(CACHE_DIR, `${cacheKey}.json`);
 
     // Check cache
-    if (fs.existsSync(cacheFile)) {
+    const cached = await storage.readData<Person>(cacheKey);
+    
+    if (cached) {
       console.log('✅ Found cached extraction:', cacheKey);
-      const cached = JSON.parse(fs.readFileSync(cacheFile, 'utf-8'));
       return { success: true, data: cached };
     }
 
@@ -49,10 +48,7 @@ export async function extractResumeFromPdf(
     console.log('   - Content length:', extracted.raw_content.length, 'chars');
 
     // Cache result
-    if (!fs.existsSync(CACHE_DIR)) {
-      fs.mkdirSync(CACHE_DIR, { recursive: true });
-    }
-    fs.writeFileSync(cacheFile, JSON.stringify(extracted, null, 2));
+    await storage.writeData(cacheKey, extracted);
     console.log('💾 Cached extraction:', cacheKey);
 
     return {
@@ -84,5 +80,3 @@ export async function extractResumeFromPdf(
     };
   }
 }
-
-

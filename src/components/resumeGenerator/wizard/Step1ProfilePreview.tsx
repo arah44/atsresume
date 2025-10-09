@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { UserProfile } from '@/services/profileStorage';
+import { UserProfile } from '@/services/repositories';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,9 +28,9 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
           </p>
         </div>
 
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="bg-orange-50 border-orange-200">
           <CardContent className="pt-6">
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex flex-col gap-4 items-center text-center">
               <AlertCircle className="w-12 h-12 text-orange-600" />
               <div>
                 <h4 className="mb-2 font-semibold text-orange-900">No Profile Found</h4>
@@ -39,7 +39,7 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
                 </p>
                 <Link href="/dashboard/profile" target="_blank">
                   <Button variant="default">
-                    <Edit className="w-4 h-4 mr-2" />
+                    <Edit className="mr-2 w-4 h-4" />
                     Create Profile
                   </Button>
                 </Link>
@@ -60,32 +60,32 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
   const baseResume = userProfile.baseResume;
 
   return (
-    <div className="flex flex-col space-y-4 sm:space-y-6 h-full">
+    <div className="flex flex-col space-y-4 h-full sm:space-y-6">
       <div>
-        <h3 className="mb-2 text-base sm:text-lg font-semibold">Step 1: Your Profile</h3>
+        <h3 className="mb-2 text-base font-semibold sm:text-lg">Step 1: Your Profile</h3>
         <p className="text-xs sm:text-sm text-muted-foreground">
           Review your profile and base resume before proceeding
         </p>
       </div>
 
       {/* Profile Card */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="bg-blue-50 border-blue-200">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex gap-2 items-center text-sm sm:text-base text-blue-900">
+          <div className="flex justify-between items-center">
+            <CardTitle className="flex gap-2 items-center text-sm text-blue-900 sm:text-base">
               <User className="w-4 h-4 text-blue-600" />
               Your Profile
             </CardTitle>
             {baseResume && (
               <Badge variant="secondary" className="text-xs">
-                <CheckCircle2 className="w-3 h-3 mr-1" />
+                <CheckCircle2 className="mr-1 w-3 h-3" />
                 Base Resume Ready
               </Badge>
             )}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-3 bg-white/60 rounded-md border border-blue-300">
+          <div className="p-3 rounded-md border border-blue-300 bg-white/60">
             <div className="space-y-2">
               <div>
                 <span className="text-xs font-medium text-blue-700">Name:</span>
@@ -109,7 +109,7 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
               {/* Base Resume Preview */}
               <Accordion type="single" collapsible className="bg-white rounded-md border border-blue-300">
                 <AccordionItem value="preview" className="border-none">
-                  <AccordionTrigger className="px-3 py-2 text-xs sm:text-sm font-medium text-blue-900 hover:no-underline">
+                  <AccordionTrigger className="px-3 py-2 text-xs font-medium text-blue-900 sm:text-sm hover:no-underline">
                     Preview Base Resume
                   </AccordionTrigger>
                   <AccordionContent className="px-3 pb-3">
@@ -172,17 +172,17 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Link href="/dashboard/profile" target="_blank" className="flex-1">
               <Button variant="outline" size="sm" className="w-full bg-white">
-                <Edit className="w-3 h-3 mr-2" />
+                <Edit className="mr-2 w-3 h-3" />
                 Edit Profile
               </Button>
             </Link>
             {baseResume && (
               <Link href="/resume/base" target="_blank" className="flex-1">
                 <Button variant="outline" size="sm" className="w-full bg-white">
-                  <ExternalLink className="w-3 h-3 mr-2" />
+                  <ExternalLink className="mr-2 w-3 h-3" />
                   Preview Base Resume
                 </Button>
               </Link>
@@ -191,7 +191,7 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
         </CardContent>
       </Card>
 
-      <div className="flex flex-col sm:flex-row gap-2 justify-end pt-4 mt-auto">
+      <div className="flex flex-col gap-2 justify-end pt-4 mt-auto sm:flex-row">
         <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
           Cancel
         </Button>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { JobFormData } from './types';
-import { UserProfile } from '@/services/profileStorage';
+import { UserProfile } from '@/services/repositories';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -20,9 +20,9 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
   onBack,
 }) => {
   return (
-    <div className="flex flex-col space-y-4 sm:space-y-6 h-full">
+    <div className="flex flex-col space-y-4 h-full sm:space-y-6">
       <div>
-        <h3 className="mb-2 text-base sm:text-lg font-semibold">Step 3: Review & Generate</h3>
+        <h3 className="mb-2 text-base font-semibold sm:text-lg">Step 3: Review & Generate</h3>
         <p className="text-xs sm:text-sm text-muted-foreground">
           Review your information before generating the AI-optimized resume
         </p>
@@ -30,12 +30,12 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
 
       <div className="space-y-4">
         <Card>
-          <CardContent className="pt-4 sm:pt-6 space-y-4">
+          <CardContent className="pt-4 space-y-4 sm:pt-6">
             {/* Profile Section */}
             <div>
               <div className="flex gap-2 items-center mb-2">
                 <User className="w-4 h-4 text-blue-600" />
-                <h4 className="text-sm sm:text-base font-semibold">Your Profile</h4>
+                <h4 className="text-sm font-semibold sm:text-base">Your Profile</h4>
               </div>
               <div className="pl-6 space-y-2">
                 <div>
@@ -49,7 +49,7 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
                 {userProfile.baseResume && (
                   <div>
                     <span className="text-xs font-medium text-muted-foreground">Base Resume:</span>
-                    <p className="text-xs sm:text-sm text-green-600">✓ Ready to use</p>
+                    <p className="text-xs text-green-600 sm:text-sm">✓ Ready to use</p>
                   </div>
                 )}
               </div>
@@ -61,7 +61,7 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
             <div>
               <div className="flex gap-2 items-center mb-2">
                 <Briefcase className="w-4 h-4 text-purple-600" />
-                <h4 className="text-sm sm:text-base font-semibold">Target Job</h4>
+                <h4 className="text-sm font-semibold sm:text-base">Target Job</h4>
               </div>
               <div className="pl-6 space-y-2">
                 <div>
@@ -75,7 +75,7 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
                 {jobData.url && (
                   <div>
                     <span className="text-xs font-medium text-muted-foreground">URL:</span>
-                    <p className="text-xs sm:text-sm text-blue-600 truncate break-all">{jobData.url}</p>
+                    <p className="text-xs text-blue-600 truncate break-all sm:text-sm">{jobData.url}</p>
                   </div>
                 )}
                 {jobData.description && (
@@ -94,9 +94,9 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
         </Card>
 
         {/* What Happens Next Card */}
-        <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="mb-2 text-sm sm:text-base font-semibold text-blue-900">What happens next?</h4>
-          <ul className="space-y-1 text-xs sm:text-sm text-blue-800">
+        <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 sm:p-4">
+          <h4 className="mb-2 text-sm font-semibold text-blue-900 sm:text-base">What happens next?</h4>
+          <ul className="space-y-1 text-xs text-blue-800 sm:text-sm">
             <li>• AI will analyze the job requirements</li>
             <li>• Extract ATS-relevant keywords</li>
             <li>• Optimize your summary for this role</li>
@@ -106,7 +106,7 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
           </ul>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 justify-between pt-4 mt-auto">
+        <div className="flex flex-col gap-2 justify-between pt-4 mt-auto sm:flex-row">
           <Button type="button" variant="outline" onClick={onBack} className="w-full sm:w-auto">
             Back
           </Button>

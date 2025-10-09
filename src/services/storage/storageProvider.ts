@@ -1,69 +1,49 @@
 /**
- * Storage Provider Interface
- * Allows cache to work with different storage backends (filesystem, localStorage, IndexedDB)
- *
- * Note: Async methods are preferred for IndexedDB, sync methods for filesystem/localStorage
- */
-export interface StorageProvider {
-  /**
-   * Read data from storage (sync - may not work for IndexedDB)
-   */
-  read<T>(key: string): T | null;
-
-  /**
-   * Write data to storage (sync)
-   */
-  write<T>(key: string, data: T): void;
-
-  /**
-   * Delete data from storage (sync)
-   */
-  delete(key: string): boolean;
-
-  /**
-   * Check if key exists (sync)
-   */
-  exists(key: string): boolean;
-
-  /**
-   * List all keys (sync)
-   */
-  listKeys(): string[];
-
-  /**
-   * Get storage type identifier
-   */
-  getType(): 'filesystem' | 'localstorage' | 'memory';
-}
-
-/**
  * Async Storage Provider Interface
- * For storage backends that require async operations (IndexedDB)
+ * MongoDB-only implementation with async operations
  */
-export interface AsyncStorageProvider extends StorageProvider {
+export interface AsyncStorageProvider {
   /**
-   * Read data from storage (async)
+   * Read data from storage
    */
   readAsync<T>(key: string): Promise<T | null>;
 
   /**
-   * Write data to storage (async)
+   * Write data to storage
    */
   writeAsync<T>(key: string, data: T): Promise<void>;
 
   /**
-   * Delete data from storage (async)
+   * Delete data from storage
    */
   deleteAsync(key: string): Promise<boolean>;
 
   /**
-   * Check if key exists (async)
+   * Check if key exists
    */
   existsAsync(key: string): Promise<boolean>;
 
   /**
-   * List all keys (async)
+   * List all keys
    */
   listKeysAsync(): Promise<string[]>;
-}
 
+  /**
+   * Clear all data
+   */
+  clearAll(): Promise<number>;
+
+  /**
+   * Get collection statistics
+   */
+  getStats(): Promise<{
+    count: number;
+    size: number;
+    avgObjSize: number;
+  } | null>;
+
+  /**
+   * Close storage connection
+   */
+  close(): Promise<void>;
+}

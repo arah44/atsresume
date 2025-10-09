@@ -1,27 +1,10 @@
 import { ScrapeResult } from '../jobScraper';
 import { JobDataParser } from '../jobDataParser';
 import * as crypto from 'crypto';
-import { getStorageProvider, type StorageProvider, type AsyncStorageProvider } from '../storage';
+import { getStorageService } from '../storage';
 
-// Global storage provider instance
-let storageProvider: StorageProvider | AsyncStorageProvider | null = null;
-
-/**
- * Get or initialize storage provider
- */
-function getStorage(): StorageProvider | AsyncStorageProvider {
-  if (!storageProvider) {
-    storageProvider = getStorageProvider();
-  }
-  return storageProvider;
-}
-
-/**
- * Check if storage is async
- */
-function isAsyncStorage(storage: StorageProvider | AsyncStorageProvider): storage is AsyncStorageProvider {
-  return 'readAsync' in storage;
-}
+// Global storage service instance
+const storage = getStorageService();
 
 /**
  * Generates a hash for cache key from URL
@@ -45,18 +28,10 @@ function generateHash(url: string): string {
 }
 
 /**
- * Reads from cache if exists (async-aware)
+ * Reads from cache if exists
  */
 async function readCache(cacheKey: string): Promise<GhostGeniusResponse | null> {
-  const storage = getStorage();
-
-  let cached: GhostGeniusResponse | null = null;
-
-  if (isAsyncStorage(storage)) {
-    cached = await storage.readAsync<GhostGeniusResponse>(cacheKey);
-  } else {
-    cached = storage.read<GhostGeniusResponse>(cacheKey);
-  }
+  const cached = await storage.readData<GhostGeniusResponse>(cacheKey);
 
   if (cached) {
     console.log(`💾 GhostGenius Cache HIT: ${cacheKey}`);
@@ -68,17 +43,10 @@ async function readCache(cacheKey: string): Promise<GhostGeniusResponse | null> 
 }
 
 /**
- * Writes to cache (async-aware)
+ * Writes to cache
  */
 async function writeCache(cacheKey: string, data: GhostGeniusResponse): Promise<void> {
-  const storage = getStorage();
-
-  if (isAsyncStorage(storage)) {
-    await storage.writeAsync(cacheKey, data);
-  } else {
-    storage.write(cacheKey, data);
-  }
-
+  await storage.writeData(cacheKey, data);
   console.log(`💾 GhostGenius Cached: ${cacheKey}`);
 }
 

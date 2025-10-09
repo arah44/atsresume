@@ -1,50 +1,33 @@
-import { StorageProvider, AsyncStorageProvider } from './storageProvider';
-import { FilesystemStorageProvider } from './filesystemStorage';
-import { LocalStorageProvider } from './localStorageProvider';
-import { IndexedDBStorageProvider } from './indexedDBStorage';
+/**
+ * MongoDB-only storage system
+ * Simplified exports for storage layer
+ */
+
+// Core provider
+import { MongoDBStorageProvider as MongoDBProvider } from './mongodbStorage';
+export { MongoDBProvider as MongoDBStorageProvider };
+
+// Storage service (recommended for application use)
+export { StorageService, getStorageService } from './StorageService';
+export type { CacheFileType, CacheMetadata } from './StorageService';
+
+// Interface
+export type { AsyncStorageProvider } from './storageProvider';
+
+// Errors
+export {
+  StorageError,
+  CacheReadError,
+  CacheWriteError,
+  CacheDeleteError,
+  CacheListError,
+  StorageConnectionError
+} from './errors';
 
 /**
- * Get the appropriate storage provider based on environment
- * - Server/Scripts: Filesystem storage
- * - Client/Browser: IndexedDB (better than localStorage for large data)
+ * Get MongoDB storage instance
+ * @deprecated Use getStorageService() instead for better OOP design
  */
-export function getStorageProvider(): StorageProvider | AsyncStorageProvider {
-  // Check if we're in a browser environment
-  if (typeof window !== 'undefined') {
-    // Use IndexedDB for client-side (better performance for large data)
-    return new IndexedDBStorageProvider('ATSResumeCache', 'cache');
-  }
-
-  // Server-side: use filesystem
-  return new FilesystemStorageProvider();
+export function getMongoDBStorage(): MongoDBProvider {
+  return new MongoDBProvider();
 }
-
-/**
- * Create a storage provider with custom configuration
- */
-export function createStorageProvider(
-  type: 'filesystem' | 'localstorage' | 'indexeddb',
-  config?: {
-    baseDir?: string;      // For filesystem
-    prefix?: string;       // For localStorage
-    dbName?: string;       // For IndexedDB
-    storeName?: string;    // For IndexedDB
-  }
-): StorageProvider | AsyncStorageProvider {
-  if (type === 'filesystem') {
-    return new FilesystemStorageProvider(config?.baseDir);
-  }
-
-  if (type === 'indexeddb') {
-    return new IndexedDBStorageProvider(config?.dbName, config?.storeName);
-  }
-
-  return new LocalStorageProvider(config?.prefix);
-}
-
-// Re-export types and classes
-export type { StorageProvider, AsyncStorageProvider } from './storageProvider';
-export { FilesystemStorageProvider } from './filesystemStorage';
-export { LocalStorageProvider } from './localStorageProvider';
-export { IndexedDBStorageProvider } from './indexedDBStorage';
-

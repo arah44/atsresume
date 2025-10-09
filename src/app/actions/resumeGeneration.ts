@@ -2,6 +2,7 @@
 
 import { CachedLangChainResumeGenerator } from '../../services/langchain/cache';
 import { Person, TargetJobJson, Resume, DataTransformationResult, ResumeGenerationInput } from '../../types';
+import { getUserId } from '@/lib/auth-utils';
 
 /**
  * Generate a base resume from a person's profile
@@ -57,17 +58,38 @@ export async function generateBaseResumeAction(person: Person): Promise<Resume> 
 }
 
 export async function generateResumeAction(
-  input: ResumeGenerationInput
+  input: ResumeGenerationInput | { targetJob: TargetJobJson }
 ): Promise<DataTransformationResult> {
   try {
     console.log('='.repeat(80));
     console.log('🚀 SERVER ACTION: generateResumeAction called');
     console.log('='.repeat(80));
+
+    let baseResume: Resume;
+
+    // If baseResume not provided, fetch from profile repository
+    if (!('baseResume' in input) || !input.baseResume || !input.baseResume.name) {
+      console.log('📥 Fetching base resume from profile repository...');
+      const userId = await getUserId();
+      const { getProfileRepository } = await import('@/services/repositories');
+      const profileRepo = getProfileRepository(userId);
+      const profile = await profileRepo.getProfile();
+
+      if (!profile?.baseResume) {
+        throw new Error('No base resume found. Please create your profile first.');
+      }
+
+      baseResume = profile.baseResume;
+      console.log('✅ Base resume loaded from profile');
+    } else {
+      baseResume = input.baseResume;
+    }
+
     console.log('Input baseResume:', {
-      name: input.baseResume?.name,
-      position: input.baseResume?.position,
-      workExperience_count: input.baseResume?.workExperience?.length || 0,
-      skills_count: input.baseResume?.skills?.length || 0
+      name: baseResume?.name,
+      position: baseResume?.position,
+      workExperience_count: baseResume?.workExperience?.length || 0,
+      skills_count: baseResume?.skills?.length || 0
     });
     console.log('Input targetJob:', {
       name: input.targetJob?.name,
@@ -77,7 +99,10 @@ export async function generateResumeAction(
     console.log('='.repeat(80));
 
     const generator = new CachedLangChainResumeGenerator();
-    const result = await generator.generateResumeWithSteps(input);
+    const result = await generator.generateResumeWithSteps({
+      baseResume,
+      targetJob: input.targetJob
+    });
 
     console.log('='.repeat(80));
     console.log('✅ SERVER ACTION: Resume generation completed');
@@ -94,7 +119,7 @@ export async function generateResumeAction(
     return result;
   } catch (error) {
     console.error('❌ SERVER ACTION: Resume generation failed:', error);
-    throw new Error('Failed to generate resume. Please try again.');
+    throw new Error(`Failed to generate resume: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 

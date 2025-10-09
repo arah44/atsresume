@@ -1,33 +1,42 @@
 import { Person, TargetJobJson, Resume, ResumeGenerationInput } from '../types';
-import { LocalStorageService } from './localStorage';
 import { validatePersonData, validateTargetJobData, createDefaultPerson, createDefaultTargetJob } from '../utils/dataTransformation';
 
 export interface DataManagerState {
   person: Person;
   targetJob: TargetJobJson;
-  baseResume: Resume | null;  // Base resume from user profile
-  resume: Resume | null;       // Currently generated resume
+  baseResume: Resume | null;
+  resume: Resume | null;
   isGenerating: boolean;
   error: string | null;
 }
 
+/**
+ * Data Manager Service
+ * Client-side state management for resume generation workflow
+ *
+ * Note: This is a pure state manager. For persistence, use server actions:
+ * - saveProfileAction() for profile/baseResume
+ * - saveJobAction() for jobs
+ * - saveResumeAction() for resumes
+ */
 export class DataManagerService {
   private state: DataManagerState;
   private listeners: Set<(state: DataManagerState) => void> = new Set();
 
-  constructor() {
+  constructor(initialState?: Partial<DataManagerState>) {
     this.state = {
-      person: createDefaultPerson(),
-      targetJob: createDefaultTargetJob(),
-      baseResume: null,
-      resume: null,
-      isGenerating: false,
-      error: null
+      person: initialState?.person || createDefaultPerson(),
+      targetJob: initialState?.targetJob || createDefaultTargetJob(),
+      baseResume: initialState?.baseResume || null,
+      resume: initialState?.resume || null,
+      isGenerating: initialState?.isGenerating || false,
+      error: initialState?.error || null
     };
-    this.loadFromStorage();
   }
 
-  // Observer pattern for state updates
+  /**
+   * Observer pattern for state updates
+   */
   subscribe(listener: (state: DataManagerState) => void): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
@@ -42,11 +51,12 @@ export class DataManagerService {
     this.notifyListeners();
   }
 
-  // Person management
+  /**
+   * Person management
+   */
   updatePerson(updates: Partial<Person>): void {
     const updatedPerson = { ...this.state.person, ...updates };
     this.updateState({ person: updatedPerson });
-    this.saveToStorage();
   }
 
   setPerson(person: Person): void {
@@ -55,14 +65,14 @@ export class DataManagerService {
       return;
     }
     this.updateState({ person, error: null });
-    this.saveToStorage();
   }
 
-  // Target job management
+  /**
+   * Target job management
+   */
   updateTargetJob(updates: Partial<TargetJobJson>): void {
     const updatedTargetJob = { ...this.state.targetJob, ...updates };
     this.updateState({ targetJob: updatedTargetJob });
-    this.saveToStorage();
   }
 
   setTargetJob(targetJob: TargetJobJson): void {
@@ -71,21 +81,25 @@ export class DataManagerService {
       return;
     }
     this.updateState({ targetJob, error: null });
-    this.saveToStorage();
   }
 
-  // Base resume management
+  /**
+   * Base resume management
+   */
   setBaseResume(baseResume: Resume | null): void {
     this.updateState({ baseResume });
   }
 
-  // Resume management
+  /**
+   * Resume management
+   */
   setResume(resume: Resume | null): void {
     this.updateState({ resume });
-    this.saveToStorage();
   }
 
-  // Generation state
+  /**
+   * Generation state
+   */
   setGenerating(isGenerating: boolean): void {
     this.updateState({ isGenerating });
   }
@@ -94,7 +108,9 @@ export class DataManagerService {
     this.updateState({ error });
   }
 
-  // Data validation
+  /**
+   * Data validation
+   */
   canGenerateResume(): { canGenerate: boolean; errors: string[] } {
     const errors: string[] = [];
 
@@ -112,7 +128,9 @@ export class DataManagerService {
     };
   }
 
-  // Generation input creation
+  /**
+   * Generation input creation
+   */
   createGenerationInput(): ResumeGenerationInput | null {
     const validation = this.canGenerateResume();
     if (!validation.canGenerate) {
@@ -131,38 +149,11 @@ export class DataManagerService {
     };
   }
 
-  // Storage operations
-  private loadFromStorage(): void {
-    const stored = LocalStorageService.loadAll();
-
-    if (stored.person) {
-      this.state.person = stored.person;
-    }
-    if (stored.targetJob) {
-      this.state.targetJob = stored.targetJob;
-    }
-    if (stored.resume) {
-      this.state.resume = stored.resume;
-    }
-
-    // Load base resume from user profile
-    const baseResume = LocalStorageService.loadBaseResume();
-    if (baseResume) {
-      this.state.baseResume = baseResume;
-    }
-
-    this.notifyListeners();
-  }
-
-  private saveToStorage(): void {
-    LocalStorageService.savePerson(this.state.person);
-    LocalStorageService.saveTargetJob(this.state.targetJob);
-    if (this.state.resume) {
-      LocalStorageService.saveResume(this.state.resume);
-    }
-  }
-
-  // Data operations
+  /**
+   * Clear all client-side state
+   * Note: This does NOT delete from MongoDB
+   * Use deleteProfileAction, deleteJobAction, etc. for persistence
+   */
   clearAllData(): void {
     this.state = {
       person: createDefaultPerson(),
@@ -172,23 +163,12 @@ export class DataManagerService {
       isGenerating: false,
       error: null
     };
-    LocalStorageService.clearAll();
     this.notifyListeners();
   }
 
-  exportData(): string | null {
-    return LocalStorageService.exportData();
-  }
-
-  importData(jsonString: string): boolean {
-    const success = LocalStorageService.importData(jsonString);
-    if (success) {
-      this.loadFromStorage();
-    }
-    return success;
-  }
-
-  // Getters
+  /**
+   * Getters
+   */
   getState(): DataManagerState {
     return { ...this.state };
   }

@@ -2,28 +2,10 @@ import * as crypto from 'crypto';
 import { LangChainResumeGenerator } from '../langchainResumeGenerator';
 import type { Person, TargetJobJson, Resume, DataTransformationResult, ResumeGenerationInput } from '../../types';
 import type { JobAnalysis, WorkExperience, SkillCategory } from './schemas';
-import { getStorageProvider, type StorageProvider, type AsyncStorageProvider } from '../storage';
+import { getStorageService } from '../storage';
 
-// Global storage provider instance
-let storageProvider: StorageProvider | AsyncStorageProvider | null = null;
-
-/**
- * Get or initialize storage provider
- */
-function getStorage(): StorageProvider | AsyncStorageProvider {
-  if (!storageProvider) {
-    storageProvider = getStorageProvider();
-    console.log(`📦 Storage provider: ${storageProvider.getType()}`);
-  }
-  return storageProvider;
-}
-
-/**
- * Check if storage is async
- */
-function isAsyncStorage(storage: StorageProvider | AsyncStorageProvider): storage is AsyncStorageProvider {
-  return 'readAsync' in storage;
-}
+// Global storage service instance
+const storage = getStorageService();
 
 /**
  * Generates a hash for cache key from input data
@@ -47,18 +29,10 @@ function generateHash(data: any): string {
 }
 
 /**
- * Reads from cache if exists (async-aware)
+ * Reads from cache if exists
  */
 async function readCache<T>(cacheKey: string): Promise<T | null> {
-  const storage = getStorage();
-
-  let cached: T | null = null;
-
-  if (isAsyncStorage(storage)) {
-    cached = await storage.readAsync<T>(cacheKey);
-  } else {
-    cached = storage.read<T>(cacheKey);
-  }
+  const cached = await storage.readData<T>(cacheKey);
 
   if (cached) {
     console.log(`💾 Cache HIT: ${cacheKey.substring(0, 16)}...`);
@@ -70,51 +44,28 @@ async function readCache<T>(cacheKey: string): Promise<T | null> {
 }
 
 /**
- * Writes to cache (async-aware)
+ * Writes to cache
  */
 async function writeCache<T>(cacheKey: string, data: T): Promise<void> {
-  const storage = getStorage();
-
-  if (isAsyncStorage(storage)) {
-    await storage.writeAsync(cacheKey, data);
-  } else {
-    storage.write(cacheKey, data);
-  }
-
+  await storage.writeData(cacheKey, data);
   console.log(`💾 Cached: ${cacheKey.substring(0, 16)}...`);
 }
 
 /**
- * Clears all cache (async-aware)
+ * Clears all cache
  */
 export async function clearCache(): Promise<void> {
-  const storage = getStorage();
-
-  if (isAsyncStorage(storage)) {
-    const keys = await storage.listKeysAsync();
-    await Promise.all(keys.map(key => storage.deleteAsync(key)));
-    console.log(`🗑️  Cleared ${keys.length} cache files`);
-  } else {
-    const keys = storage.listKeys();
-    keys.forEach(key => storage.delete(key));
-    console.log(`🗑️  Cleared ${keys.length} cache files`);
-  }
+  const count = await storage.clearAll();
+  console.log(`🗑️  Cleared ${count} cache files`);
 }
 
 /**
- * Lists cache files with metadata (async-aware)
+ * Lists cache files
  */
 export async function listCache(): Promise<void> {
-  const storage = getStorage();
+  const keys = await storage.listKeys();
 
-  let keys: string[];
-  if (isAsyncStorage(storage)) {
-    keys = await storage.listKeysAsync();
-  } else {
-    keys = storage.listKeys();
-  }
-
-  console.log(`\n📂 Cache Storage: ${storage.getType()}`);
+  console.log(`\n📂 Cache Storage: MongoDB`);
   console.log(`📊 Total cached items: ${keys.length}\n`);
 
   keys.forEach((key, idx) => {
@@ -124,7 +75,7 @@ export async function listCache(): Promise<void> {
 
 /**
  * Cached wrapper for LangChain Resume Generator
- * Caches expensive LLM calls to filesystem
+ * Caches expensive LLM calls to MongoDB
  */
 export class CachedLangChainResumeGenerator extends LangChainResumeGenerator {
 
@@ -261,38 +212,22 @@ export class CachedLangChainResumeGenerator extends LangChainResumeGenerator {
 }
 
 /**
- * Get cache statistics (async-aware)
+ * Get cache statistics
  */
 export async function getCacheStats(): Promise<{
   totalFiles: number;
   totalSize: number;
 }> {
   try {
-    const storage = getStorage();
-
-    let keys: string[];
+    const keys = await storage.listKeys();
     let totalSize = 0;
 
-    if (isAsyncStorage(storage)) {
-      keys = await storage.listKeysAsync();
-
-      // Calculate total size for async storage
-      for (const key of keys) {
-        const data = await storage.readAsync(key);
-        if (data) {
-          totalSize += new Blob([JSON.stringify(data)]).size;
-        }
+    // Calculate total size
+    for (const key of keys) {
+      const metadata = await storage.getMetadata(key);
+      if (metadata) {
+        totalSize += metadata.size;
       }
-    } else {
-      keys = storage.listKeys();
-
-      // Calculate total size for sync storage
-      keys.forEach(key => {
-        const data = storage.read(key);
-        if (data) {
-          totalSize += new Blob([JSON.stringify(data)]).size;
-        }
-      });
     }
 
     return {

@@ -6,9 +6,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Person, TargetJobJson, GenerationStatus, Resume } from '@/types';
 import { generateResumeAction, generateBaseResumeAction } from '@/app/actions/resumeGeneration';
-import { ResumeStorageService } from '@/services/resumeStorage';
-import { ProfileStorageService, UserProfile } from '@/services/profileStorage';
-import { JobStorageService, SavedJob } from '@/services/jobStorage';
+import { saveResumeAction } from '@/app/actions/resumeActions';
+import { updateProfileAction } from '@/app/actions/profileActions';
+import { UserProfile } from '@/services/repositories/ProfileRepository';
+import { SavedJob } from '@/services/repositories/JobRepository';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { User, Briefcase, FileCheck, Sparkles } from 'lucide-react';
@@ -22,9 +23,16 @@ import { jobSchema, JobFormData } from './wizard/types';
 interface CreateResumeWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialProfile: UserProfile | null;
+  initialJobs: SavedJob[];
 }
 
-export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, onOpenChange }) => {
+export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({
+  open,
+  onOpenChange,
+  initialProfile,
+  initialJobs
+}) => {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [jobData, setJobData] = useState<JobFormData | null>(null);
@@ -32,8 +40,8 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
   const [generationStatus, setGenerationStatus] = useState<GenerationStatus>(GenerationStatus.PENDING);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [currentStepText, setCurrentStepText] = useState('');
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [savedJobs, setSavedJobs] = useState<SavedJob[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(initialProfile);
+  const [savedJobs, setSavedJobs] = useState<SavedJob[]>(initialJobs);
   const [selectedJobId, setSelectedJobId] = useState<string>('');
 
   const jobForm = useForm<JobFormData>({
@@ -47,15 +55,11 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
     }
   });
 
-  // Load user profile and jobs when dialog opens
+  // Update state when props change
   useEffect(() => {
-    if (open) {
-      const profile = ProfileStorageService.getProfile();
-      const jobs = JobStorageService.getAllJobs();
-      setUserProfile(profile);
-      setSavedJobs(jobs);
-    }
-  }, [open]);
+    setUserProfile(initialProfile);
+    setSavedJobs(initialJobs);
+  }, [initialProfile, initialJobs]);
 
   const handleJobSubmit = (data: JobFormData) => {
     setJobData(data);
@@ -109,12 +113,9 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
         updateProgress(GenerationStatus.PENDING, 10, 'Generating base resume...');
         baseResume = await generateBaseResumeAction(person);
 
-        // Save to profile for future use
-        ProfileStorageService.updateProfile({
-          baseResume,
-          metadata: {
-            lastUpdated: Date.now()
-          }
+        // Save to profile for future use using server action
+        await updateProfileAction({
+          baseResume
         });
         toast.success('Base resume generated and saved to your profile');
       } else {
@@ -143,15 +144,19 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({ open, on
 
       updateProgress(GenerationStatus.COMPLETED, 100, 'Resume generated successfully!');
 
-      // Save the job-specific resume
-      const resumeId = ResumeStorageService.saveResumeById(result.resume);
+      // Save the job-specific resume using server action
+      const saveResult = await saveResumeAction(result.resume);
+
+      if (!saveResult.success || !saveResult.id) {
+        throw new Error('Failed to save resume');
+      }
 
       toast.success('Job-specific resume created successfully!');
 
       // Close dialog and redirect
       setTimeout(() => {
         onOpenChange(false);
-        router.push(`/resume/${resumeId}`);
+        router.push(`/resume/${saveResult.id}`);
       }, 1000);
 
     } catch (error) {

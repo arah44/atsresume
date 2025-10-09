@@ -7,7 +7,7 @@ import Meta from "./meta/Meta";
 import FormCloseOpenBtn from "./FormCloseOpenBtn";
 import Preview from "./preview/ui/Preview";
 import { ResumeProvider, useResumeContext } from "../context/ResumeContext";
-import { ResumeStorageService } from "../services/resumeStorage";
+import { saveResumeAction } from "@/app/actions/resumeActions";
 import { useAutosave } from "../hooks/useAutosave";
 import { Button } from "./ui/button";
 import {
@@ -49,7 +49,7 @@ function BuilderContent({ initialResume }) {
   }, [initialResume, setResumeData]);
 
   // Autosave function - saves to the SAME ID every time
-  const handleAutosave = useCallback((data: typeof resumeData) => {
+  const handleAutosave = useCallback(async (data: typeof resumeData) => {
     console.log('🎯 Autosave triggered');
     console.log('   - Resume ID:', data.id);
     console.log('   - Name:', data.name);
@@ -60,16 +60,18 @@ function BuilderContent({ initialResume }) {
     }
 
     try {
-      // saveResumeById handles both regular and base resumes
-      // It will OVERWRITE the existing resume based on ID
-      const savedId = ResumeStorageService.saveResumeById(data);
+      // Use server action to save resume
+      const result = await saveResumeAction(data);
 
-      if (savedId === data.id) {
-        console.log('✅ Autosaved successfully to:', savedId);
-      } else {
+      if (result.success && result.id === data.id) {
+        console.log('✅ Autosaved successfully to:', result.id);
+      } else if (result.success && result.id !== data.id) {
         console.error('❌ ID MISMATCH after save!');
         console.error('   - Expected:', data.id);
-        console.error('   - Got:', savedId);
+        console.error('   - Got:', result.id);
+      } else {
+        console.error('❌ Autosave failed:', result.error);
+        throw new Error(result.error || 'Failed to autosave');
       }
     } catch (error) {
       console.error('❌ Autosave failed:', error);
@@ -87,10 +89,16 @@ function BuilderContent({ initialResume }) {
   });
 
   // Manual save (shows modal with shareable link)
-  const handleSaveResume = () => {
+  const handleSaveResume = async () => {
     try {
-      const savedId = ResumeStorageService.saveResumeById(resumeData);
-      const url = ResumeStorageService.getResumeUrl(savedId);
+      const result = await saveResumeAction(resumeData);
+
+      if (!result.success || !result.id) {
+        throw new Error(result.error || 'Failed to save resume');
+      }
+
+      // Generate shareable URL
+      const url = `${window.location.origin}/resume/${result.id}`;
       setSavedUrl(url);
       setShowSaveModal(true);
       toast.success('Resume saved successfully!');

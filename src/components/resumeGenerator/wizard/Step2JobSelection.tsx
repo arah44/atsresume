@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { JobFormData } from './types';
-import { SavedJob } from '@/services/jobStorage';
+import { SavedJob } from '@/services/repositories';
 import { JobDataParser } from '@/services/jobDataParser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -120,22 +120,22 @@ export const Step2JobSelection: React.FC<Step2JobSelectionProps> = ({
   };
 
   return (
-    <div className="flex flex-col space-y-4 sm:space-y-6 h-full">
+    <div className="flex flex-col space-y-4 h-full sm:space-y-6">
       <div>
-        <h3 className="mb-2 text-base sm:text-lg font-semibold">Step 2: Target Job</h3>
+        <h3 className="mb-2 text-base font-semibold sm:text-lg">Step 2: Target Job</h3>
         <p className="text-xs sm:text-sm text-muted-foreground">
           Import from URL, load a saved job, or paste the complete job description
         </p>
       </div>
 
       {/* Import Job from URL - Primary Method */}
-      <Card className="border-purple-200 bg-purple-50">
+      <Card className="bg-purple-50 border-purple-200">
         <CardContent className="pt-4 space-y-3">
           <label className="flex gap-2 items-center text-sm font-semibold text-purple-900">
             <Link2 className="w-4 h-4 text-purple-600" />
             Import Job from URL
           </label>
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Input
               placeholder="https://company.com/careers/job-posting"
               value={jobUrl}
@@ -175,7 +175,7 @@ export const Step2JobSelection: React.FC<Step2JobSelectionProps> = ({
 
       {/* Load Saved Job */}
       {savedJobs.length > 0 && (
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="bg-blue-50 border-blue-200">
           <CardContent className="pt-4 space-y-2">
             <label className="flex gap-2 items-center text-sm font-semibold text-blue-900">
               <Database className="w-4 h-4 text-blue-600" />
@@ -219,7 +219,7 @@ export const Step2JobSelection: React.FC<Step2JobSelectionProps> = ({
           beamColor="#8b5cf6"
           beamColorTo="#06b6d4"
         />
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             type="button"
             onClick={handleParseJobData}
@@ -255,7 +255,7 @@ export const Step2JobSelection: React.FC<Step2JobSelectionProps> = ({
       <Separator />
 
       {/* Manual Job Form (Collapsible) */}
-      <Accordion type="single" collapsible className="border rounded-lg">
+      <Accordion type="single" collapsible className="rounded-lg border">
         <AccordionItem value="manual-form" className="border-none">
           <AccordionTrigger className="px-4 py-3 text-sm font-medium hover:no-underline">
             Manual Job Details (Optional)
@@ -346,7 +346,7 @@ export const Step2JobSelection: React.FC<Step2JobSelectionProps> = ({
         </AccordionItem>
       </Accordion>
 
-      <div className="flex flex-col sm:flex-row gap-2 justify-between pt-4 mt-auto">
+      <div className="flex flex-col gap-2 justify-between pt-4 mt-auto sm:flex-row">
         <Button type="button" variant="outline" onClick={onBack} className="w-full sm:w-auto">
           Back
         </Button>

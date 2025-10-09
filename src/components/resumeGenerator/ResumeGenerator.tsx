@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useResumeContext } from '../../context/ResumeContext';
 import { GenerationStatus } from '../../types';
-import { ResumeStorageService } from '../../services/resumeStorage';
+import { saveResumeAction } from '@/app/actions/resumeActions';
 
 export const ResumeGenerator: React.FC = () => {
   const {
@@ -35,15 +35,20 @@ export const ResumeGenerator: React.FC = () => {
     }
   };
 
-  const handleSaveResume = () => {
+  const handleSaveResume = async () => {
     if (!resumeData.id) {
       alert('No resume to save. Please generate a resume first.');
       return;
     }
 
     try {
-      const savedId = ResumeStorageService.saveResumeById(resumeData);
-      const url = ResumeStorageService.getResumeUrl(savedId);
+      const result = await saveResumeAction(resumeData);
+
+      if (!result.success || !result.id) {
+        throw new Error(result.error || 'Failed to save resume');
+      }
+
+      const url = `${window.location.origin}/resume/${result.id}`;
       setShareUrl(url);
       setShowShareModal(true);
     } catch (err) {
@@ -249,7 +254,7 @@ export const ResumeGenerator: React.FC = () => {
             </button>
             <button
               onClick={() => {
-                const url = ResumeStorageService.getResumeUrl(resumeData.id!);
+                const url = `${window.location.origin}/resume/${resumeData.id}`;
                 navigator.clipboard.writeText(url);
                 alert('Share link copied to clipboard!');
               }}
