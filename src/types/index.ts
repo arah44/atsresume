@@ -99,7 +99,7 @@ export interface CustomSection {
 // Resume data structure (matches DefaultResumeData.jsx structure exactly)
 // This structure is IMMUTABLE and must not be changed
 export interface Resume {
-  id?: string; // Hash-based unique identifier (optional for backward compatibility)
+  id: string; // Hash-based unique identifier (optional for backward compatibility)
   jobId?: string; // ID of the job this resume was generated for (undefined for base resume)
   name: string;
   position: string;

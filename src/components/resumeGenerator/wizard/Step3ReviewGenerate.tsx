@@ -46,7 +46,7 @@ export const Step3ReviewGenerate: React.FC<Step3ReviewGenerateProps> = ({
                   <span className="text-xs font-medium text-muted-foreground">Content Length:</span>
                   <p className="text-xs sm:text-sm">{userProfile.raw_content.length} characters</p>
                 </div>
-                {userProfile.baseResume && (
+                {userProfile.baseResumeId && (
                   <div>
                     <span className="text-xs font-medium text-muted-foreground">Base Resume:</span>
                     <p className="text-xs text-green-600 sm:text-sm">✓ Ready to use</p>

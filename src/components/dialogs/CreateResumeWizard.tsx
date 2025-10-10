@@ -115,7 +115,7 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({
       if (userProfile?.baseResumeId) {
         // Use existing base resume from repository - fetch via server action
         updateProgress(GenerationStatus.PENDING, 5, 'Loading base resume from your profile...');
-        
+
         // We'll fetch the base resume via the generation action
         baseResume = { name: '', position: '' } as Resume; // Will be fetched server-side
         toast.success(`Using your base resume`);
@@ -127,7 +127,7 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({
         // Save to resume repository and update profile with ID
         await updateProfileAction({
           baseResume
-        });
+        } as any);
         toast.success('Base resume generated and saved to your profile');
       } else {
         // No profile - generate temporary base resume
@@ -156,7 +156,7 @@ export const CreateResumeWizard: React.FC<CreateResumeWizardProps> = ({
       updateProgress(GenerationStatus.COMPLETED, 100, 'Resume generated successfully!');
 
       // Save the job-specific resume using server action with jobId
-      const saveResult = await saveResumeAction(result.resume, targetJob.id || undefined);
+      const saveResult = await saveResumeAction(result.resume, selectedJobId || undefined);
 
       if (!saveResult.success || !saveResult.id) {
         throw new Error('Failed to save resume');

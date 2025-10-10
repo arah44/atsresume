@@ -20,12 +20,19 @@ export default async function DashboardPage() {
     jobRepo.getAll()
   ]);
 
+  const baseResume = profile?.baseResumeId ? await resumeRepo.getById(profile.baseResumeId) : null;
+
+  const filteredResumesList = resumesList.filter(resume => resume.id !== profile?.baseResumeId);
+
+
+
   // Pass data to client component
   return (
     <DashboardClientPage
-      initialProfile={profile}
-      initialResumesList={resumesList}
-      initialJobs={jobs}
+      profile={profile}
+      resumesList={filteredResumesList}
+      jobs={jobs}
+      baseResume={baseResume}
     />
   );
 }

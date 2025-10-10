@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { Trash2, Copy, Download, Plus, Clock, User, Briefcase, Target, Eye } from 'lucide-react';
 import { CreateResumeWizard } from '@/components/dialogs/CreateResumeWizard';
 import Link from 'next/link';
+import { Resume } from '@/types';
 
 interface DashboardResume {
   id: string;
@@ -21,15 +22,17 @@ interface DashboardResume {
 }
 
 interface DashboardClientPageProps {
-  initialProfile: UserProfile | null;
-  initialResumesList: DashboardResume[];
-  initialJobs: SavedJob[];
+  profile: UserProfile | null;
+  resumesList: DashboardResume[];
+  jobs: SavedJob[];
+  baseResume: Resume | null;
 }
 
 export function DashboardClientPage({
-  initialProfile,
-  initialResumesList,
-  initialJobs
+  profile,
+  resumesList,
+  jobs,
+  baseResume
 }: DashboardClientPageProps) {
   const router = useRouter();
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -37,7 +40,7 @@ export function DashboardClientPage({
   const handleDeleteResume = async (resumeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (resumeId === initialProfile?.baseResumeId) {
+    if (resumeId === profile?.baseResumeId) {
       // Remove base resume from profile
       if (confirm('Delete this base resume? This will remove it from your profile.')) {
         await updateProfileAction({ baseResumeId: undefined });
@@ -77,15 +80,15 @@ export function DashboardClientPage({
     });
   };
 
-  const baseResume = initialProfile?.baseResumeId ? {
-    id: initialProfile.baseResumeId,
-    name: initialProfile.name,
-    position: 'Base Resume',
-    timestamp: initialProfile.timestamp,
-    type: 'base' as const,
-    profileName: initialProfile.name,
-    resume: null // Will be fetched separately
-  } : null;
+  // const baseResume = initialProfile?.baseResumeId ? {
+  //   id: initialProfile.baseResumeId,
+  //   name: initialProfile.name,
+  //   position: 'Base Resume',
+  //   timestamp: initialProfile.timestamp,
+  //   type: 'base' as const,
+  //   profileName: initialProfile.name,
+  //   resume: null // Will be fetched separately
+  // } : null;
 
   return (
     <div className="container p-4 mx-auto space-y-6 sm:p-6 sm:space-y-8">
@@ -94,7 +97,7 @@ export function DashboardClientPage({
         <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">My Resumes</h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
-            {baseResume ? '1 base resume' : 'No base resume'} • {initialResumesList.length} job-specific
+            {baseResume ? '1 base resume' : 'No base resume'} • {resumesList.length} job-specific
           </p>
         </div>
         <Button onClick={() => setWizardOpen(true)} size="lg" className="w-full sm:w-auto">
@@ -139,15 +142,15 @@ export function DashboardClientPage({
             </CardHeader>
 
             <CardContent className="space-y-3">
-              <div className="flex gap-2 items-center text-sm text-muted-foreground">
+              {/* <div className="flex gap-2 items-center text-sm text-muted-foreground">
                 <Clock className="w-4 h-4" />
                 <span>{formatDate(baseResume.timestamp)}</span>
-              </div>
+              </div> */}
 
-              {baseResume.profileName && (
+              {baseResume.name && (
                 <div className="flex gap-2 items-center text-sm">
                   <User className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Profile: <span className="font-medium text-foreground">{baseResume.profileName}</span></span>
+                  <span className="text-muted-foreground">Profile: <span className="font-medium text-foreground">{baseResume.name}</span></span>
                 </div>
               )}
 
@@ -192,13 +195,13 @@ export function DashboardClientPage({
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
             <h2 className="text-xl font-semibold">Job-Specific Resumes</h2>
-            {initialResumesList.length > 0 && (
-              <Badge variant="outline">{initialResumesList.length}</Badge>
+            {resumesList.length > 0 && (
+              <Badge variant="outline">{resumesList.length}</Badge>
             )}
           </div>
         </div>
 
-        {initialResumesList.length === 0 ? (
+        {resumesList.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="flex flex-col justify-center items-center py-16">
               <Target className="mb-4 w-16 h-16 text-muted-foreground" />
@@ -216,7 +219,7 @@ export function DashboardClientPage({
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {initialResumesList.map((resume) => (
+            {resumesList.map((resume) => (
               <Card
                 key={resume.id}
                 className="transition-shadow cursor-pointer hover:shadow-lg"
@@ -302,8 +305,8 @@ export function DashboardClientPage({
             router.refresh();
           }
         }}
-        initialProfile={initialProfile}
-        initialJobs={initialJobs}
+        initialProfile={profile}
+        initialJobs={jobs}
       />
     </div>
   );

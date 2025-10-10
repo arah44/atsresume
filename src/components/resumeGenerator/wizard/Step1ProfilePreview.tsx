@@ -57,7 +57,7 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
     );
   }
 
-  const baseResume = userProfile.baseResume;
+  const hasBaseResume = !!userProfile.baseResumeId;
 
   return (
     <div className="flex flex-col space-y-4 h-full sm:space-y-6">
@@ -76,7 +76,7 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
               <User className="w-4 h-4 text-blue-600" />
               Your Profile
             </CardTitle>
-            {baseResume && (
+            {hasBaseResume && (
               <Badge variant="secondary" className="text-xs">
                 <CheckCircle2 className="mr-1 w-3 h-3" />
                 Base Resume Ready
@@ -100,7 +100,7 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
             </div>
           </div>
 
-          {baseResume ? (
+          {hasBaseResume ? (
             <>
               <p className="text-xs text-blue-700">
                 ✓ Your profile includes a base resume. We&apos;ll use it to create your job-specific resume faster.
@@ -114,52 +114,9 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
                   </AccordionTrigger>
                   <AccordionContent className="px-3 pb-3">
                     <div className="space-y-3 text-xs sm:text-sm">
-                      {/* Summary */}
-                      {baseResume.summary && (
-                        <div>
-                          <h5 className="mb-1 font-semibold text-blue-900">Summary</h5>
-                          <p className="text-blue-800 line-clamp-3">{baseResume.summary}</p>
-                        </div>
-                      )}
-
-                      {/* Work Experience */}
-                      {baseResume.workExperience && baseResume.workExperience.length > 0 && (
-                        <div>
-                          <h5 className="mb-1 font-semibold text-blue-900">Work Experience</h5>
-                          <div className="space-y-2">
-                            {baseResume.workExperience.slice(0, 2).map((exp, idx) => (
-                              <div key={idx} className="pl-3 border-l-2 border-blue-300">
-                                <p className="font-medium text-blue-900">{exp.position}</p>
-                                <p className="text-xs text-blue-700">{exp.company} • {exp.startYear} - {exp.endYear}</p>
-                              </div>
-                            ))}
-                            {baseResume.workExperience.length > 2 && (
-                              <p className="text-xs italic text-blue-600">
-                                +{baseResume.workExperience.length - 2} more...
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Skills */}
-                      {baseResume.skills && baseResume.skills.length > 0 && (
-                        <div>
-                          <h5 className="mb-1 font-semibold text-blue-900">Skills</h5>
-                          <div className="flex flex-wrap gap-1">
-                            {baseResume.skills.slice(0, 3).map((category, idx) => (
-                              <Badge key={idx} variant="outline" className="text-xs">
-                                {category.title}
-                              </Badge>
-                            ))}
-                            {baseResume.skills.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{baseResume.skills.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                      <p className="text-blue-800">
+                        Your base resume is ready and will be used to generate the job-specific resume.
+                      </p>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
@@ -179,7 +136,7 @@ export const Step1ProfilePreview: React.FC<Step1ProfilePreviewProps> = ({
                 Edit Profile
               </Button>
             </Link>
-            {baseResume && (
+            {hasBaseResume && (
               <Link href="/resume/base" target="_blank" className="flex-1">
                 <Button variant="outline" size="sm" className="w-full bg-white">
                   <ExternalLink className="mr-2 w-3 h-3" />

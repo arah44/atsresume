@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import "@/styles/resume.css";
+// import "@/styles/resume.css";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {

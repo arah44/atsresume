@@ -47,14 +47,27 @@ export const auth = betterAuth({
     requireEmailVerification: false, // Set to true in production
   },
 
+  // socialProviders: {
+  //   google: {
+  //     clientId: process.env.GOOGLE_CLIENT_ID as string,
+  //     clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+  //     accessType: "offline",
+  //     prompt: "select_account consent",
+  //   },
+  // },
+
   session: {
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60, // Cache duration in seconds (5 minutes)
+      maxAge: 24 * 60 * 60, // 24 hours in seconds
     },
     updateAge: 24 * 60 * 60, // 24 hours in seconds
-    expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
+    expiresIn: 30 * 24 * 60 * 60, // 30 days in seconds
   },
+
+  trustedOrigins: [
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  ],
 
   advanced: {
     generateId: false, // Use MongoDB ObjectId
