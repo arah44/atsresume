@@ -8,9 +8,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import { ProfileCreationForm } from '@/components/forms/ProfileCreationForm';
 import { Button } from '@/components/ui/button';
 import { Sparkles, FileText, Rocket } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OnboardingWizardProps {
   open: boolean;
@@ -24,6 +35,7 @@ export function OnboardingWizard({
   onComplete
 }: OnboardingWizardProps) {
   const [step, setStep] = useState<'welcome' | 'create-profile'>('welcome');
+  const isMobile = useIsMobile();
 
   const handleGetStarted = () => {
     setStep('create-profile');
@@ -40,92 +52,55 @@ export function OnboardingWizard({
     onOpenChange(false);
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        {step === 'welcome' ? (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-primary" />
-                Welcome to ATS Resume Builder!
-              </DialogTitle>
-              <DialogDescription className="text-base">
-                Let&apos;s get you started with creating your professional resume
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-6 py-6">
-              {/* Welcome Message */}
-              <div className="text-center space-y-4">
-                <div className="flex justify-center">
-                  <div className="p-4 bg-primary/10 rounded-full">
-                    <FileText className="w-16 h-16 text-primary" />
-                  </div>
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent className="max-h-[96vh]">
+          {step === 'welcome' ? (
+            <div className="overflow-y-auto">
+              <DrawerHeader className="text-center">
+                <div className="sr-only">
+                  <DrawerTitle>Welcome to Jobsly</DrawerTitle>
+                  <DrawerDescription>Get started with your profile</DrawerDescription>
                 </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold">
-                    Create Your First Profile
-                  </h3>
-                  <p className="text-muted-foreground max-w-lg mx-auto">
-                    To get started, we&apos;ll need to create your profile. This will generate a base resume
-                    that you can then tailor for specific job applications.
-                  </p>
-                </div>
-              </div>
-
-              {/* Features */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="p-4 border rounded-lg text-center space-y-2">
-                  <div className="flex justify-center">
-                    <FileText className="w-8 h-8 text-primary" />
-                  </div>
-                  <h4 className="font-medium">Upload Resume</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Upload your existing resume PDF for quick setup
-                  </p>
-                </div>
-                <div className="p-4 border rounded-lg text-center space-y-2">
-                  <div className="flex justify-center">
-                    <Sparkles className="w-8 h-8 text-primary" />
-                  </div>
-                  <h4 className="font-medium">AI Extraction</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Our AI extracts and structures your information
-                  </p>
-                </div>
-                <div className="p-4 border rounded-lg text-center space-y-2">
-                  <div className="flex justify-center">
-                    <Rocket className="w-8 h-8 text-primary" />
-                  </div>
-                  <h4 className="font-medium">Tailored Resumes</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Generate job-specific resumes in seconds
-                  </p>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-                <Button
-                  size="lg"
-                  onClick={handleGetStarted}
-                  className="sm:px-8"
-                >
-                  <Sparkles className="mr-2 w-4 h-4" />
-                  Get Started
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={handleSkip}
-                  className="sm:px-8"
-                >
-                  Skip for Now
-                </Button>
+              </DrawerHeader>
+              <div className="px-4 pb-4">
+                <WelcomeContent
+                  handleGetStarted={handleGetStarted}
+                  handleSkip={handleSkip}
+                />
               </div>
             </div>
-          </>
+          ) : (
+            <div className="overflow-y-auto">
+              <DrawerHeader className="text-left">
+                <DrawerTitle>Create Your Profile</DrawerTitle>
+                <DrawerDescription>
+                  Upload your resume or paste your content to generate your base resume
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="px-4 pb-4">
+                <ProfileCreationForm
+                  onSuccess={handleSuccess}
+                  onCancel={handleSkip}
+                  showCard={false}
+                />
+              </div>
+            </div>
+          )}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm max-h-sm md:max-w-4xl md:max-h-[90vh] overflow-y-auto">
+        {step === 'welcome' ? (
+          <WelcomeContent
+            handleGetStarted={handleGetStarted}
+            handleSkip={handleSkip}
+          />
         ) : (
           <>
             <DialogHeader>
@@ -146,3 +121,87 @@ export function OnboardingWizard({
   );
 }
 
+function WelcomeContent({
+  handleGetStarted,
+  handleSkip
+}: {
+  handleGetStarted: () => void;
+  handleSkip: () => void;
+}) {
+  return (
+    <div className="py-6 space-y-6">
+      {/* Welcome Message */}
+      <div className="space-y-4 text-center">
+        <div className="flex justify-center">
+          <div className="p-4 rounded-full bg-primary/10">
+            <FileText className="w-16 h-16 text-primary" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold">
+            Create Your First Profile
+          </h3>
+          <p className="mx-auto max-w-lg text-muted-foreground">
+            To get started, we&apos;ll need to create your profile. This will generate a base resume
+            that you can then tailor later for specific job applications.
+          </p>
+        </div>
+      </div>
+
+      {/* Features */}
+      <div className="hidden grid-cols-3 gap-4">
+        <Feature
+          title="Upload Resume"
+          description="Upload your existing resume PDF for quick setup"
+          icon={<FileText className="w-8 h-8 text-primary" />}
+        />
+        <Feature
+          title="AI Extraction"
+          description="Our AI extracts and structures your information"
+          icon={<Sparkles className="w-8 h-8 text-primary" />}
+          classNames="hidden"
+        />
+        <Feature
+          title="Tailored Resumes"
+          description="Generate job-specific resumes in seconds"
+          icon={<Rocket className="w-8 h-8 text-primary" />}
+        />
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col gap-3 justify-center pt-4 sm:flex-row">
+        <Button
+          size="lg"
+          onClick={handleGetStarted}
+          className="sm:px-8"
+        >
+          <Sparkles className="mr-2 w-4 h-4" />
+          Get Started
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={handleSkip}
+          className="sm:px-8"
+        >
+          Skip for Now
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Feature({ title, description, icon, classNames }: { title: string, description: string, icon: React.ReactNode, classNames?: string }) {
+  return (<>
+    <div className={cn("p-4 space-y-2 text-center rounded-lg border", classNames)}>
+      <div className="flex justify-center">
+        {icon}
+      </div>
+      <h4 className="font-medium">{title}</h4>
+      <p className="text-sm text-muted-foreground">
+        {description}
+      </p>
+    </div>
+  </>
+  );
+}

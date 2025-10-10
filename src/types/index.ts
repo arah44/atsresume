@@ -100,6 +100,7 @@ export interface CustomSection {
 // This structure is IMMUTABLE and must not be changed
 export interface Resume {
   id?: string; // Hash-based unique identifier (optional for backward compatibility)
+  jobId?: string; // ID of the job this resume was generated for (undefined for base resume)
   name: string;
   position: string;
   contactInformation: string;
@@ -220,42 +221,17 @@ export interface GenerationHistory {
 }
 
 // Context types for React integration
+// Simplified: Only for Builder component resume editing
 export interface ResumeContextType {
+  // Resume editing state
   resumeData: Resume;
-  setResumeData: (resume: Resume) => void;
+  setResumeData: (resume: Resume | ((prev: Resume) => Resume)) => void;
 
-  // New data sources
-  personData: Person;
-  targetJobData: TargetJobJson;
-
-  // Generation state
+  // Generation state (for UI feedback only)
   isGenerating: boolean;
-  generationProgress: number;
-  currentStep: string;
   error: string | null;
-  currentGeneration?: Generation;
-  generationHistory: Generation[];
 
-  // Methods
-  generateResume: (input: ResumeGenerationInput) => Promise<void>;
-  loadPersonData: (data: Person) => void;
-  loadTargetJobData: (data: TargetJobJson) => void;
-  validatePersonData: (data: any) => data is Person;
-  validateTargetJobData: (data: any) => data is TargetJobJson;
-  syncPersonAndTargetJobToResume: () => void;
-  syncResumeToPerson: () => void;
-  createNewPerson: () => Person;
-  createNewTargetJob: () => TargetJobJson;
-  clearAllData: () => void;
-
-  // Generation history methods
-  getGenerationById: (id: string) => Generation | undefined;
-  clearGenerationHistory: () => void;
-
-  // Backward compatibility handlers
+  // Form handlers for Builder
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleProfilePicture: (e: React.ChangeEvent<HTMLInputElement>) => void;
-
-  // Data manager access
-  dataManager: any; // DataManagerService type
 }

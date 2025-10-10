@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Trash2, Copy, Download, Plus, Clock, User, Briefcase, Target, Eye } from 'lucide-react';
-import { CreateResumeWizard } from '@/components/resumeGenerator/CreateResumeWizard';
+import { CreateResumeWizard } from '@/components/dialogs/CreateResumeWizard';
+import Link from 'next/link';
 
 interface DashboardResume {
   id: string;
@@ -36,10 +37,10 @@ export function DashboardClientPage({
   const handleDeleteResume = async (resumeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (resumeId === 'base-resume') {
+    if (resumeId === initialProfile?.baseResumeId) {
       // Remove base resume from profile
       if (confirm('Delete this base resume? This will remove it from your profile.')) {
-        await updateProfileAction({ baseResume: undefined });
+        await updateProfileAction({ baseResumeId: undefined });
         toast.success('Base resume removed from your profile');
         router.refresh();
       }
@@ -76,22 +77,22 @@ export function DashboardClientPage({
     });
   };
 
-  const baseResume = initialProfile?.baseResume ? {
-    id: 'base-resume',
-    name: initialProfile.baseResume.name,
-    position: initialProfile.baseResume.position,
+  const baseResume = initialProfile?.baseResumeId ? {
+    id: initialProfile.baseResumeId,
+    name: initialProfile.name,
+    position: 'Base Resume',
     timestamp: initialProfile.timestamp,
     type: 'base' as const,
     profileName: initialProfile.name,
-    resume: initialProfile.baseResume
+    resume: null // Will be fetched separately
   } : null;
 
   return (
-    <div className="container p-4 sm:p-6 mx-auto space-y-6 sm:space-y-8">
+    <div className="container p-4 mx-auto space-y-6 sm:p-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div className="min-w-0">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">My Resumes</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">My Resumes</h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             {baseResume ? '1 base resume' : 'No base resume'} • {initialResumesList.length} job-specific
           </p>
@@ -105,10 +106,10 @@ export function DashboardClientPage({
       {/* Base Resume Section */}
       {baseResume && (
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2 items-center">
             <h2 className="text-xl font-semibold">Base Resume</h2>
             <Badge variant="secondary">
-              <User className="w-3 h-3 mr-1" />
+              <User className="mr-1 w-3 h-3" />
               Master Template
             </Badge>
           </div>
@@ -150,35 +151,28 @@ export function DashboardClientPage({
                 </div>
               )}
 
-              {baseResume.resume && (
-                <div className="pt-2 border-t">
-                  <div className="flex gap-3 text-xs text-muted-foreground">
-                    <span>{baseResume.resume.workExperience?.length || 0} jobs</span>
-                    <span>•</span>
-                    <span>{baseResume.resume.skills?.length || 0} skills</span>
-                    <span>•</span>
-                    <span>{baseResume.resume.education?.length || 0} education</span>
-                  </div>
+              <div className="pt-2 border-t">
+                <div className="flex gap-3 text-xs text-muted-foreground">
+                  <span>Base template</span>
+                  <span>•</span>
+                  <span>Master resume</span>
                 </div>
-              )}
+              </div>
             </CardContent>
 
-            <CardFooter className="flex-col sm:flex-row gap-2">
+            <CardFooter className="flex-col gap-2 sm:flex-row">
               <Button
                 variant="default"
-                size="sm"
                 className="flex-1 w-full"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push('/resume/base');
-                }}
+                asChild
               >
-                <Eye className="mr-2 w-3 h-3" />
-                View in Builder
+                <Link href="/resume/base">
+                  <Eye className="mr-2 w-3 h-3" />
+                  View in Builder
+                </Link>
               </Button>
               <Button
                 variant="outline"
-                size="sm"
                 className="flex-1 w-full"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -196,7 +190,7 @@ export function DashboardClientPage({
       {/* Job-Specific Resumes Section */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2 items-center">
             <h2 className="text-xl font-semibold">Job-Specific Resumes</h2>
             {initialResumesList.length > 0 && (
               <Badge variant="outline">{initialResumesList.length}</Badge>
@@ -236,7 +230,7 @@ export function DashboardClientPage({
                           {resume.name}
                         </CardTitle>
                         <Badge variant="default" className="shrink-0">
-                          <Target className="w-3 h-3 mr-1" />
+                          <Target className="mr-1 w-3 h-3" />
                           Job
                         </Badge>
                       </div>
@@ -262,7 +256,7 @@ export function DashboardClientPage({
                   </div>
                 </CardContent>
 
-                <CardFooter className="flex-col sm:flex-row gap-2">
+                <CardFooter className="flex-col gap-2 sm:flex-row">
                   <Button
                     variant="outline"
                     size="sm"

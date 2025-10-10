@@ -131,8 +131,8 @@ export function JobDetailsClientPage({
         targetJob
       });
 
-      // Save resume using server action
-      const saveResult = await saveResumeAction(result.resume);
+      // Save resume using server action with jobId
+      const saveResult = await saveResumeAction(result.resume, job.id);
 
       if (saveResult.success && saveResult.id) {
         setResumeId(saveResult.id);

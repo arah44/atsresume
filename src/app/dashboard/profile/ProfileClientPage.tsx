@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { UserProfile } from '@/services/repositories';
-import { Person } from '@/types';
+import { Person, Resume } from '@/types';
 import { ProfileCreationForm } from '@/components/forms/ProfileCreationForm';
 import { updateProfileAction, regenerateBaseResumeAction } from '@/app/actions/profileActions';
 import { AddDetailDialog } from '@/components/profile/AddDetailDialog';
@@ -19,9 +19,10 @@ import { useRouter } from 'next/navigation';
 
 interface ProfileClientPageProps {
   initialProfile: UserProfile | null;
+  baseResume?: Resume | null;
 }
 
-export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
+export function ProfileClientPage({ initialProfile, baseResume }: ProfileClientPageProps) {
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(initialProfile);
   const [isEditing, setIsEditing] = useState(!initialProfile); // Start editing if no profile
@@ -44,14 +45,14 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
       toast.info('Regenerating base resume...');
 
       const result = await regenerateBaseResumeAction();
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to regenerate base resume');
       }
 
       toast.success('Base resume regenerated successfully!');
       setError(null);
-      
+
       // Refresh to get updated data
       router.refresh();
     } catch (err) {
@@ -110,7 +111,7 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
   };
 
   return (
-    <div className="container p-4 sm:p-6 mx-auto space-y-6 sm:space-y-8 max-w-5xl">
+    <div className="container p-4 mx-auto space-y-6 max-w-5xl sm:p-6 sm:space-y-8">
       {/* Error Alert */}
       {error && (
         <ErrorAlert
@@ -123,9 +124,9 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div className="min-w-0">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Your Profile</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Your Profile</h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             Manage your profile and base resume
           </p>
@@ -138,38 +139,16 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
         )}
       </div>
 
-      {/* No Profile State */}
-      {!profile && !isEditing ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col justify-center items-center py-16">
-            <User className="mb-4 w-16 h-16 text-muted-foreground" />
-            <h2 className="mb-2 text-2xl font-semibold">No Profile Yet</h2>
-            <p className="mb-6 max-w-md text-center text-muted-foreground">
-              Create your profile to generate a base resume for building tailored resumes
-            </p>
-            <Button onClick={() => setIsEditing(true)} size="lg">
-              <User className="mr-2 w-4 h-4" />
-              Create Profile
-            </Button>
-          </CardContent>
-        </Card>
-      ) : null}
+
 
       {/* Edit/Create Form */}
       {isEditing ? (
         <Card>
-          <CardHeader>
-            <CardTitle>{profile ? 'Edit Profile' : 'Create Profile'}</CardTitle>
-            <CardDescription>
-              Your profile information will be used to generate a base resume
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+
             <ProfileCreationForm
               onSuccess={handleProfileCreated}
               onCancel={profile ? () => setIsEditing(false) : undefined}
             />
-          </CardContent>
         </Card>
       ) : null}
 
@@ -177,10 +156,10 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
       {profile && !isEditing ? (
         <>
           {/* Base Resume Display */}
-          {profile.baseResume ? (
+          {baseResume ? (
             <Card>
               <CardHeader>
-                <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-start">
+                <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
                   <div className="min-w-0">
                     <CardTitle className="flex gap-2 items-center text-lg sm:text-xl">
                       <FileText className="w-5 h-5" />
@@ -190,14 +169,14 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
                       Your base resume generated from your profile
                     </CardDescription>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                  <div className="flex flex-col gap-2 w-full sm:flex-row sm:w-auto">
                     <Button
                       asChild
                       variant="default"
                       size="sm"
                       className="w-full sm:w-auto"
                     >
-                      <Link href="/resume/base">
+                      <Link href={profile.baseResumeId ? `/resume/${profile.baseResumeId}` : '/resume/base'}>
                         <Eye className="mr-2 w-4 h-4" />
                         View in Builder
                       </Link>
@@ -216,29 +195,29 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                  <div className="text-center p-4 bg-secondary/50 rounded-lg">
-                    <div className="text-2xl font-bold">{profile.baseResume.workExperience?.length || 0}</div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+                  <div className="p-4 text-center rounded-lg bg-secondary/50">
+                    <div className="text-2xl font-bold">{baseResume.workExperience?.length || 0}</div>
                     <div className="text-xs sm:text-sm text-muted-foreground">Work Experience</div>
                   </div>
-                  <div className="text-center p-4 bg-secondary/50 rounded-lg">
-                    <div className="text-2xl font-bold">{profile.baseResume.skills?.length || 0}</div>
+                  <div className="p-4 text-center rounded-lg bg-secondary/50">
+                    <div className="text-2xl font-bold">{baseResume.skills?.length || 0}</div>
                     <div className="text-xs sm:text-sm text-muted-foreground">Skills</div>
                   </div>
-                  <div className="text-center p-4 bg-secondary/50 rounded-lg">
-                    <div className="text-2xl font-bold">{profile.baseResume.education?.length || 0}</div>
+                  <div className="p-4 text-center rounded-lg bg-secondary/50">
+                    <div className="text-2xl font-bold">{baseResume.education?.length || 0}</div>
                     <div className="text-xs sm:text-sm text-muted-foreground">Education</div>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2 text-sm sm:text-base">Target Position</h4>
-                  <p className="text-sm">{profile.baseResume.position}</p>
+                  <h4 className="mb-2 text-sm font-medium sm:text-base">Target Position</h4>
+                  <p className="text-sm">{baseResume.position}</p>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2 text-sm sm:text-base">Professional Summary</h4>
-                  <p className="text-sm text-muted-foreground">{profile.baseResume.summary}</p>
+                  <h4 className="mb-2 text-sm font-medium sm:text-base">Professional Summary</h4>
+                  <p className="text-sm text-muted-foreground">{baseResume.summary}</p>
                 </div>
               </CardContent>
             </Card>
@@ -268,14 +247,14 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h4 className="font-medium mb-2">Profile Content</h4>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                <h4 className="mb-2 font-medium">Profile Content</h4>
+                <p className="text-sm whitespace-pre-wrap text-muted-foreground">
                   {profile.raw_content}
                 </p>
               </div>
               {profile.metadata?.notes && (
                 <div>
-                  <h4 className="font-medium mb-2">Notes</h4>
+                  <h4 className="mb-2 font-medium">Notes</h4>
                   <p className="text-sm text-muted-foreground">{profile.metadata.notes}</p>
                 </div>
               )}
@@ -285,7 +264,7 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
           {/* Additional Details / Saved Answers */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-start">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
                 <div className="flex gap-2 items-start">
                   <HelpCircle className="w-5 h-5 mt-0.5" />
                   <div>
@@ -301,7 +280,7 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
                   size="sm"
                   className="w-full sm:w-auto"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="mr-2 w-4 h-4" />
                   Add Detail
                 </Button>
               </div>
@@ -312,16 +291,16 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
                   {profile.additional_details.map((detail, index) => (
                     <div
                       key={index}
-                      className="flex items-start justify-between gap-4 p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors group"
+                      className="flex gap-4 justify-between items-start p-3 rounded-lg border transition-colors bg-muted/30 hover:bg-muted/50 group"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium mb-1">{detail.question}</p>
-                        <p className="text-sm text-muted-foreground break-words">
+                        <p className="mb-1 text-sm font-medium">{detail.question}</p>
+                        <p className="text-sm break-words text-muted-foreground">
                           {typeof detail.answer === 'boolean'
                             ? detail.answer ? 'Yes' : 'No'
                             : detail.answer}
                         </p>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex gap-2 items-center mt-2">
                           <Badge variant="outline" className="text-xs">
                             {detail.field_type || 'text'}
                           </Badge>
@@ -334,18 +313,18 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleRemoveDetail(index)}
-                        className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="opacity-0 transition-opacity shrink-0 group-hover:opacity-100"
                         title="Remove this answer"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="w-4 h-4" />
                       </Button>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <HelpCircle className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-                  <p className="text-sm text-muted-foreground mb-4">
+                <div className="py-8 text-center">
+                  <HelpCircle className="mx-auto mb-3 w-12 h-12 text-muted-foreground/50" />
+                  <p className="mb-4 text-sm text-muted-foreground">
                     No saved answers yet. Add details manually or they&apos;ll be saved automatically when you use auto-apply.
                   </p>
                   <Button
@@ -353,7 +332,7 @@ export function ProfileClientPage({ initialProfile }: ProfileClientPageProps) {
                     variant="outline"
                     size="sm"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="mr-2 w-4 h-4" />
                     Add Your First Detail
                   </Button>
                 </div>

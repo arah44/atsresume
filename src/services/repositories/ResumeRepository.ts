@@ -12,7 +12,6 @@ export interface SavedResume extends Omit<Resume, 'id'>, BaseEntity {
  * Now supports multi-user with userId scoping
  */
 export class ResumeRepository extends BaseRepository<SavedResume> {
-  private static readonly BASE_RESUME_ID = 'base-resume';
   private userId: string;
 
   constructor(storage: AsyncStorageProvider, userId: string) {
@@ -50,32 +49,47 @@ export class ResumeRepository extends BaseRepository<SavedResume> {
   }
 
   /**
-   * Get base resume
+   * Get base resume (resume without jobId)
    */
   async getBaseResume(): Promise<SavedResume | null> {
-    return this.getById(ResumeRepository.BASE_RESUME_ID);
+    const all = await this.getAll();
+    return all.find(resume => !resume.jobId) || null;
   }
 
   /**
-   * Save base resume
+   * Save base resume (ensures no jobId is set)
    */
   async saveBaseResume(resume: Resume): Promise<string> {
+    // Ensure no jobId for base resume
+    const baseResumeData = { ...resume, jobId: undefined };
+    const resumeWithId = baseResumeData.id ? baseResumeData : ensureResumeId(baseResumeData);
+    
     const baseResume: SavedResume = {
-      ...resume,
+      ...resumeWithId,
       userId: this.userId,  // Inject userId
-      id: ResumeRepository.BASE_RESUME_ID,
+      jobId: undefined, // Explicitly ensure no jobId
+      id: resumeWithId.id!,
       timestamp: Date.now()
     };
 
-    const key = this.getEntityKey(ResumeRepository.BASE_RESUME_ID);
+    const key = this.getEntityKey(baseResume.id);
     await this.storage.writeAsync(key, baseResume);
+    await this.addToList(baseResume);
 
-    console.log('✅ Base resume saved for user:', this.userId);
-    return ResumeRepository.BASE_RESUME_ID;
+    console.log('✅ Base resume saved for user:', this.userId, 'ID:', baseResume.id);
+    return baseResume.id;
   }
 
   /**
-   * Get resumes for a specific job
+   * Get resumes for a specific job by jobId
+   */
+  async getJobResumes(jobId: string): Promise<SavedResume[]> {
+    const all = await this.getAll();
+    return all.filter(resume => resume.jobId === jobId);
+  }
+
+  /**
+   * Get resumes for a specific job by name and company (legacy method)
    */
   async getByJob(jobName: string, company: string): Promise<SavedResume[]> {
     const all = await this.getAll();

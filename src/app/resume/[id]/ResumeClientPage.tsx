@@ -6,7 +6,7 @@ import { ResumeGenerationInfo } from '@/components/resumeGenerator/ResumeGenerat
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Home, Info } from 'lucide-react';
+import { FileText, Home, Info, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 
 interface ResumeClientPageProps {
@@ -20,12 +20,22 @@ export function ResumeClientPage({ resume, isBaseResume }: ResumeClientPageProps
       <Tabs defaultValue="resume" className="w-full">
         <div className="flex sticky top-0 z-10 items-center px-8 border-b bg-background exclude-print">
           <div className="container flex justify-between items-center px-4 mx-auto">
-            <Button variant="outline" asChild>
-              <Link href="/dashboard" className="gap-2">
-                <Home className="w-4 h-4" />
-                Dashboard
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" asChild>
+                <Link href="/dashboard" className="gap-2">
+                  <Home className="w-4 h-4" />
+                  Dashboard
+                </Link>
+              </Button>
+              {resume.jobId && (
+                <Button variant="outline" asChild>
+                  <Link href={`/dashboard/jobs/${resume.jobId}`} className="gap-2">
+                    <Briefcase className="w-4 h-4" />
+                    View Job
+                  </Link>
+                </Button>
+              )}
+            </div>
 
             <div className="container px-4 mx-auto">
               <TabsList className="justify-start h-14 w-fit exclude-print">

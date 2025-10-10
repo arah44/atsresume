@@ -9,15 +9,19 @@ import { revalidatePath } from 'next/cache';
  * MUTATION: Save resume
  */
 export async function saveResumeAction(
-  resume: Resume
+  resume: Resume,
+  jobId?: string
 ): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
     // Get userId from session
     const userId = await getUserId();
     const resumeRepo = getResumeRepository(userId);
 
-    const id = await resumeRepo.saveResume(resume);
-    console.log('✅ Resume saved for user:', userId, 'ID:', id);
+    // Set jobId if provided
+    const resumeWithJobId = jobId ? { ...resume, jobId } : resume;
+    
+    const id = await resumeRepo.saveResume(resumeWithJobId);
+    console.log('✅ Resume saved for user:', userId, 'ID:', id, 'JobId:', jobId);
 
     // Revalidate pages
     revalidatePath('/dashboard');
@@ -38,20 +42,22 @@ export async function saveResumeAction(
  */
 export async function saveBaseResumeAction(
   resume: Resume
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
     // Get userId from session
     const userId = await getUserId();
     const resumeRepo = getResumeRepository(userId);
 
-    await resumeRepo.saveBaseResume(resume);
-    console.log('✅ Base resume saved for user:', userId);
+    // Ensure no jobId for base resume
+    const baseResume = { ...resume, jobId: undefined };
+    const id = await resumeRepo.saveBaseResume(baseResume);
+    console.log('✅ Base resume saved for user:', userId, 'ID:', id);
 
     // Revalidate pages
     revalidatePath('/dashboard');
     revalidatePath('/resume/base');
 
-    return { success: true };
+    return { success: true, id };
   } catch (error) {
     console.error('❌ Failed to save base resume:', error);
     return {

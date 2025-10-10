@@ -9,7 +9,7 @@ const FormCloseOpenBtn = ({ formClose, setFormClose }) => {
     <Button
       aria-label="Form Open/Close"
       variant="outline"
-      className="fixed bottom-5 left-10 order-2 font-bold border-white shadow-lg b exclude-print"
+      className="hidden bottom-5 left-10 order-2 font-bold border-white shadow-lg md:fixed b exclude-print"
       onClick={() => setFormClose(!formClose)}
     >
       {formClose ? <PanelLeftOpen className="w-10 h-10" title="Form Open" /> : <Fullscreen className="w-10 h-10" title="Form Close" />}

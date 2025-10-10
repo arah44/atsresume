@@ -8,7 +8,7 @@ export interface UserProfile extends BaseEntity {
   raw_content: string;
   email?: string;
   phone?: string;
-  baseResume?: Resume;
+  baseResumeId?: string; // ID reference to base resume in ResumeRepository
   additional_details?: ApplicationDetail[];
   metadata?: {
     lastUpdated?: number;

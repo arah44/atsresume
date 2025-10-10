@@ -48,7 +48,7 @@ export default async function JobDetailsPage({ params }: JobDetailsPageProps) {
       job={job}
       resumeId={resumeForJob?.id || null}
       hasProfile={!!profile}
-      hasBaseResume={!!profile?.baseResume}
+      hasBaseResume={!!profile?.baseResumeId}
       hasApplied={hasApplied}
     />
   );

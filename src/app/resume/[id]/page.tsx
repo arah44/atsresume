@@ -19,30 +19,15 @@ export default async function ResumePage({ params }: ResumePageProps) {
   const userId = await getUserId();
   const resumeRepo = getResumeRepository(userId);
 
-  // Special case: 'base-resume' ID
-  const isBaseResume = id === 'base-resume';
+  // Load resume by ID from repository
+  const resume = await resumeRepo.getById(id);
 
-  let resume;
-
-  if (isBaseResume) {
-    // Load base resume from profile
-    const { getProfileRepository } = await import('@/services/repositories');
-    const profileRepo = getProfileRepository(userId);
-    const profile = await profileRepo.getProfile();
-
-    if (!profile?.baseResume) {
-      notFound();
-    }
-
-    resume = { ...profile.baseResume, id: 'base-resume' };
-  } else {
-    // Load regular resume by ID
-    resume = await resumeRepo.getById(id);
-
-    if (!resume) {
-      notFound();
-    }
+  if (!resume) {
+    notFound();
   }
+
+  // Determine if this is a base resume (no jobId)
+  const isBaseResume = !resume.jobId;
 
   return (
     <ResumeClientPage

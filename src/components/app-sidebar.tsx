@@ -14,7 +14,7 @@ import {
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
-import { CreateResumeWizard } from "@/components/resumeGenerator/CreateResumeWizard"
+import { CreateResumeWizard } from "@/components/dialogs/CreateResumeWizard"
 import {
   Sidebar,
   SidebarContent,

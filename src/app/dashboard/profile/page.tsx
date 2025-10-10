@@ -11,10 +11,19 @@ export default async function ProfilePage() {
   // Get userId from session
   const userId = await getUserId();
 
-  // Fetch data server-side using repository
+  // Fetch data server-side using repositories
   const profileRepo = getProfileRepository(userId);
+  const { getResumeRepository } = await import('@/services/repositories');
+  const resumeRepo = getResumeRepository(userId);
+
   const profile = await profileRepo.getProfile();
+  const baseResume = profile?.baseResumeId ? await resumeRepo.getById(profile.baseResumeId) : null;
 
   // Pass data to client component
-  return <ProfileClientPage initialProfile={profile} />;
+  return (
+    <ProfileClientPage
+      initialProfile={profile}
+      baseResume={baseResume}
+    />
+  );
 }

@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { Person, TargetJobJson } from '../types';
 
 // Zod schemas for validation
 export const personSchema = z.object({
@@ -16,27 +15,4 @@ export const targetJobSchema = z.object({
   apply_url: z.string().optional(),
   is_easy_apply: z.boolean().optional(),
   remote_allowed: z.boolean().optional()
-});
-
-// Validation functions
-export const validatePersonData = (personData: unknown): personData is Person => {
-  return personSchema.safeParse(personData).success;
-};
-
-export const validateTargetJobData = (targetJobData: unknown): targetJobData is TargetJobJson => {
-  return targetJobSchema.safeParse(targetJobData).success;
-};
-
-// Create defaults
-export const createDefaultPerson = (): Person => ({
-  name: '',
-  raw_content: ''
-});
-
-export const createDefaultTargetJob = (): TargetJobJson => ({
-  name: '',
-  url: '',
-  company: '',
-  description: '',
-  raw_content: ''
 });

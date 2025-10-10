@@ -5,12 +5,11 @@ import { UserProfile } from '@/services/repositories';
 import { OnboardingWizard } from '@/components/dialogs/OnboardingWizard';
 import { useRouter } from 'next/navigation';
 
-interface DashboardLayoutClientProps {
-  children: React.ReactNode;
+interface OnboardingWizardClientProps {
   initialProfile: UserProfile | null;
 }
 
-export function DashboardLayoutClient({ children, initialProfile }: DashboardLayoutClientProps) {
+export function OnboardingWizardClient({  initialProfile }: OnboardingWizardClientProps) {
   const router = useRouter();
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -28,7 +27,6 @@ export function DashboardLayoutClient({ children, initialProfile }: DashboardLay
 
   return (
     <>
-      {children}
       <OnboardingWizard
         open={showOnboarding}
         onOpenChange={setShowOnboarding}

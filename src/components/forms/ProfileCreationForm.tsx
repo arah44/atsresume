@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Person } from '@/types';
-import { PersonForm } from '@/components/resumeGenerator/forms/PersonForm';
+import { PersonForm } from '@/components/forms/PersonForm';
 import { saveProfileAction } from '@/app/actions/profileActions';
-import { parseErrorMessage } from '@/utils/errorHandling';
+import { parseErrorMessage, UserFriendlyError } from '@/utils/errorHandling';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { ErrorDisplay } from '@/components/ui/error-display';
 
 interface ProfileCreationFormProps {
   onSuccess?: () => void;
@@ -14,40 +15,50 @@ interface ProfileCreationFormProps {
   showCard?: boolean;
 }
 
-export function ProfileCreationForm({ 
-  onSuccess, 
+export function ProfileCreationForm({
+  onSuccess,
   onCancel,
-  showCard = true 
+  showCard = true
 }: ProfileCreationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<UserFriendlyError | null>(null);
 
-  const handleSubmit = async (data: Person) => {
+  const handleSubmit = (data: Person) => {
+    console.log('📝 handleSubmit called with data:', data);
+
+    // Clear any previous errors
+    setError(null);
     setIsSubmitting(true);
 
-    try {
-      console.log('📝 Starting profile creation...');
-      
-      toast.info('Generating base resume...');
-      
-      const result = await saveProfileAction(data);
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to save profile');
-      }
+    // Call server action asynchronously
+    saveProfileAction(data)
+      .then((result) => {
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to save profile');
+        }
 
-      toast.success('✅ Profile and base resume saved successfully!');
-      
-      // Call success callback
-      if (onSuccess) {
-        onSuccess();
-      }
-    } catch (err) {
-      console.error('❌ FAILED to save profile:', err);
-      const parsedError = parseErrorMessage(err);
-      toast.error(parsedError.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+        toast.success('✅ Profile and base resume saved successfully!');
+
+        // Call success callback
+        if (onSuccess) {
+          onSuccess();
+        }
+      })
+      .catch((err) => {
+        console.error('❌ FAILED to save profile:', err);
+        const parsedError = parseErrorMessage(err);
+        setError(parsedError);
+        toast.error(parsedError.message);
+      })
+      .finally(() => {
+        console.log('🏁 Setting isSubmitting to false');
+        setIsSubmitting(false);
+      });
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    // Form will remain filled, user can fix issues and resubmit
   };
 
   const emptyPerson: Person = {
@@ -75,6 +86,8 @@ export function ProfileCreationForm({
       onSubmit={handleSubmit}
       onCancel={onCancel}
       isLoading={isSubmitting}
+      externalError={error}
+      onClearExternalError={() => setError(null)}
     />
   );
 }

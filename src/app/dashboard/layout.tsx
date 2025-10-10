@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { getProfileRepository, getJobRepository } from "@/services/repositories"
 import { getUserId } from "@/lib/auth-utils"
-import { DashboardLayoutClient } from "./DashboardLayoutClient"
+import { OnboardingWizardClient } from "@/components/OnboardingWizardClient"
 
 /**
  * Dashboard Layout - Server Component
@@ -22,7 +22,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     jobRepo.getAllSorted()
   ])
 
-  return (
+  return (<>
+
     <SidebarProvider>
       <AppSidebar
         variant="inset"
@@ -34,13 +35,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="flex flex-col flex-1">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <DashboardLayoutClient initialProfile={profile}>
-                {children}
-              </DashboardLayoutClient>
+              {children}
             </div>
           </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
+    <OnboardingWizardClient initialProfile={profile} />
+  </>
   )
 }

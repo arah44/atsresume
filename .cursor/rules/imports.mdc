@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+
+Prefer to use absolute imports with aliases.
+
+Good = import { Button } from '@/components/ui/button';
+Bad = import { Button } from '../../components/ui/button';

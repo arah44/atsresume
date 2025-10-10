@@ -146,8 +146,8 @@ export function JobsClientPage({ initialJobs, hasProfile, hasBaseResume }: JobsC
         }
       });
 
-      // Save the resume using server action
-      const saveResult = await saveResumeAction(result.resume);
+      // Save the resume using server action with jobId
+      const saveResult = await saveResumeAction(result.resume, job.id);
 
       updateProgress(GenerationStatus.COMPLETED, 100, 'Resume generated successfully!');
       toast.success('Resume generated successfully!');

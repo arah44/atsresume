@@ -2,6 +2,8 @@
  * Error handling utilities for user-friendly error messages
  */
 
+import { ZodError } from 'zod';
+
 export interface UserFriendlyError {
   title: string;
   message: string;
@@ -9,10 +11,79 @@ export interface UserFriendlyError {
   technicalDetails?: string;
 }
 
+export type ErrorType =
+  | 'validation'
+  | 'pdf'
+  | 'parsing'
+  | 'api'
+  | 'network'
+  | 'auth'
+  | 'permission'
+  | 'file_upload'
+  | 'unknown';
+
+/**
+ * Categorize error type for better handling
+ */
+export function getErrorType(error: unknown): ErrorType {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  // Check if it's a Zod validation error
+  if (error instanceof ZodError || errorMessage.includes('ZodError')) {
+    return 'validation';
+  }
+
+  if (errorMessage.includes('PDF') || errorMessage.includes('pdf')) {
+    return 'pdf';
+  }
+
+  if (errorMessage.includes('Failed to parse') || errorMessage.includes('OUTPUT_PARSING_FAILURE')) {
+    return 'parsing';
+  }
+
+  if (errorMessage.includes('API') || errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
+    return 'api';
+  }
+
+  if (errorMessage.includes('network') || errorMessage.includes('fetch') || errorMessage.includes('timeout')) {
+    return 'network';
+  }
+
+  if (errorMessage.includes('auth') || errorMessage.includes('unauthorized') || errorMessage.includes('401')) {
+    return 'auth';
+  }
+
+  if (errorMessage.includes('permission') || errorMessage.includes('forbidden') || errorMessage.includes('403')) {
+    return 'permission';
+  }
+
+  if (errorMessage.includes('file size') || errorMessage.includes('file type') || errorMessage.includes('upload')) {
+    return 'file_upload';
+  }
+
+  return 'unknown';
+}
+
 /**
  * Convert technical errors to user-friendly messages
  */
 export function parseErrorMessage(error: unknown): UserFriendlyError {
+  // Handle Zod validation errors specifically
+  if (error instanceof ZodError) {
+    const issues = error.issues;
+    const fieldErrors = issues.map(issue => {
+      const fieldName = issue.path.join('.') || 'field';
+      return `${fieldName}: ${issue.message}`;
+    }).join('\n• ');
+
+    return {
+      title: 'Validation Error',
+      message: 'Please check the following fields:',
+      suggestion: '• ' + fieldErrors + '\n\nPlease fill in all required fields before submitting.',
+      technicalDetails: JSON.stringify(issues, null, 2)
+    };
+  }
+
   const errorMessage = error instanceof Error ? error.message : String(error);
 
   // PDF extraction errors
@@ -75,6 +146,36 @@ export function parseErrorMessage(error: unknown): UserFriendlyError {
     };
   }
 
+  // Authentication errors
+  if (errorMessage.includes('auth') || errorMessage.includes('unauthorized') || errorMessage.includes('401')) {
+    return {
+      title: 'Authentication Required',
+      message: 'You need to be signed in to perform this action.',
+      suggestion: 'Please sign in and try again. If you are signed in, try refreshing the page.',
+      technicalDetails: errorMessage
+    };
+  }
+
+  // Permission errors
+  if (errorMessage.includes('permission') || errorMessage.includes('forbidden') || errorMessage.includes('403')) {
+    return {
+      title: 'Permission Denied',
+      message: 'You don\'t have permission to perform this action.',
+      suggestion: 'Please contact support if you believe this is an error.',
+      technicalDetails: errorMessage
+    };
+  }
+
+  // File upload errors
+  if (errorMessage.includes('file size') || errorMessage.includes('file type') || errorMessage.includes('too large')) {
+    return {
+      title: 'File Upload Error',
+      message: 'The file you\'re trying to upload is not valid.',
+      suggestion: 'Please ensure your file is a PDF under 10MB in size.',
+      technicalDetails: errorMessage
+    };
+  }
+
   // Generic error
   return {
     title: 'Something Went Wrong',
@@ -101,7 +202,7 @@ export function getRelevantErrorDetails(error: unknown): string {
   // Extract just the relevant part, not the full stack
   if (errorMessage.includes('Failed to parse')) {
     // Extract validation errors if present
-    const validationMatch = errorMessage.match(/Error: \[(.*?)\]/s);
+    const validationMatch = errorMessage.match(/Error: \[([\s\S]*?)\]/);
     if (validationMatch) {
       try {
         const errors = JSON.parse(`[${validationMatch[1]}]`);

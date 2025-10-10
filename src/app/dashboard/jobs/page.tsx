@@ -23,7 +23,7 @@ export default async function JobsPage() {
     <JobsClientPage
       initialJobs={jobs}
       hasProfile={!!profile}
-      hasBaseResume={!!profile?.baseResume}
+      hasBaseResume={!!profile?.baseResumeId}
     />
   );
 }

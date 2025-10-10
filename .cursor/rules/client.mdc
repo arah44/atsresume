@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+
+A client component should wrap the smallest possible unit of functionality.
+
+For example, if a page has a button with onClick, dont make the page a client component, wrap the button in a client component and import.

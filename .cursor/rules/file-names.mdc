@@ -1,0 +1,18 @@
+---
+alwaysApply: true
+---
+
+Use dash-case for file names.
+
+Good = person-form.tsx
+Bad = personForm.tsx
+
+Use capital CamelCase for component names and classes.
+
+Good = PersonForm.tsx
+Bad = personForm.tsx
+
+Use camelCase for function names.
+
+Good = handleSubmit.tsx
+Bad = handleSubmit.tsx
