@@ -8,8 +8,8 @@ import { Person, TargetJobJson, GenerationStatus, Resume } from '@/types';
 import { generateResumeAction, generateBaseResumeAction } from '@/app/actions/resumeGeneration';
 import { saveResumeAction } from '@/app/actions/resumeActions';
 import { updateProfileAction } from '@/app/actions/profileActions';
-import { UserProfile } from '@/services/repositories/ProfileRepository';
-import { SavedJob } from '@/services/repositories/JobRepository';
+import { UserProfile } from '@/services/repositories';
+import { SavedJob } from '@/services/repositories';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import {
   Drawer,

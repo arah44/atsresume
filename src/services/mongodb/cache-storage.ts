@@ -1,13 +1,74 @@
 import { Db, Collection, Document } from 'mongodb';
-import { AsyncStorageProvider } from './storageProvider';
-import {
-  StorageConnectionError,
-  CacheReadError,
-  CacheWriteError,
-  CacheDeleteError,
-  CacheListError
-} from './errors';
 import { getCacheDatabase } from '@/lib/mongodb';
+
+// Error classes
+export class StorageError extends Error {
+  constructor(message: string, public readonly cause?: Error) {
+    super(message);
+    this.name = 'StorageError';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+  }
+}
+
+export class CacheReadError extends StorageError {
+  constructor(key: string, cause?: Error) {
+    const message = cause
+      ? `Failed to read cache key: ${key}. Cause: ${cause.message}`
+      : `Failed to read cache key: ${key}`;
+    super(message, cause);
+    this.name = 'CacheReadError';
+  }
+}
+
+export class CacheWriteError extends StorageError {
+  constructor(key: string, cause?: Error) {
+    const message = cause
+      ? `Failed to write cache key: ${key}. Cause: ${cause.message}`
+      : `Failed to write cache key: ${key}`;
+    super(message, cause);
+    this.name = 'CacheWriteError';
+  }
+}
+
+export class CacheDeleteError extends StorageError {
+  constructor(key: string, cause?: Error) {
+    const message = cause
+      ? `Failed to delete cache key: ${key}. Cause: ${cause.message}`
+      : `Failed to delete cache key: ${key}`;
+    super(message, cause);
+    this.name = 'CacheDeleteError';
+  }
+}
+
+export class CacheListError extends StorageError {
+  constructor(cause?: Error) {
+    const message = cause
+      ? `Failed to list cache keys. Cause: ${cause.message}`
+      : 'Failed to list cache keys';
+    super(message, cause);
+    this.name = 'CacheListError';
+  }
+}
+
+export class StorageConnectionError extends StorageError {
+  constructor(message: string = 'Failed to connect to storage backend', cause?: Error) {
+    const fullMessage = cause
+      ? `${message}. Cause: ${cause.message}`
+      : message;
+    super(fullMessage, cause);
+    this.name = 'StorageConnectionError';
+  }
+}
+
+export interface AsyncStorageProvider {
+  readAsync<T>(key: string): Promise<T | null>;
+  writeAsync<T>(key: string, data: T): Promise<void>;
+  deleteAsync(key: string): Promise<boolean>;
+  existsAsync(key: string): Promise<boolean>;
+  listKeysAsync(): Promise<string[]>;
+}
 
 /**
  * Custom document type with string _id
@@ -18,11 +79,11 @@ interface CacheDocument extends Document {
 }
 
 /**
- * MongoDB Storage Provider
+ * MongoDB Cache Storage Provider
  * Async-only implementation for server-side caching
  * Uses shared MongoDB client from @/lib/mongodb for connection pooling
  */
-export class MongoDBStorageProvider implements AsyncStorageProvider {
+export class MongoCacheStorage implements AsyncStorageProvider {
   private db: Db | null = null;
   private collection: Collection<CacheDocument> | null = null;
   private collectionName: string;
@@ -73,7 +134,10 @@ export class MongoDBStorageProvider implements AsyncStorageProvider {
   async readAsync<T>(key: string): Promise<T | null> {
     try {
       await this.init();
-      if (!this.collection) return null;
+      if (!this.collection) {
+        console.error('[MongoDBStorage] Collection not initialized for key:', key);
+        return null;
+      }
 
       const doc = await this.collection.findOne({ _id: key });
 
@@ -83,6 +147,7 @@ export class MongoDBStorageProvider implements AsyncStorageProvider {
       return data.data as T;
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
+      console.error('[MongoDBStorage] Read error for key:', key, 'Error:', err.message, err.stack);
       throw new CacheReadError(key, err);
     }
   }

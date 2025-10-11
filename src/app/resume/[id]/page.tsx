@@ -17,10 +17,10 @@ export default async function ResumePage({ params }: ResumePageProps) {
 
   // Get userId from session
   const userId = await getUserId();
-  const resumeRepo = getResumeRepository(userId);
+  const resumeRepo = await getResumeRepository(userId);
 
   // Load resume by ID from repository
-  const resume = await resumeRepo.getById(id);
+  const resume = await resumeRepo.findById(id);
 
   if (!resume) {
     notFound();

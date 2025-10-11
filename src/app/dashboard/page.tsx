@@ -1,38 +1,43 @@
-import { getProfileRepository, getResumeRepository, getJobRepository } from '@/services/repositories';
+import { getProfileRepository, getResumeRepository, getJobRepository, getApplicationRepository } from '@/services/repositories';
 import { getUserId } from '@/lib/auth-utils';
-import { DashboardClientPage } from './DashboardClientPage';
+import { DashboardOverviewClientPage } from './DashboardOverviewClientPage';
 
 /**
- * Server Component - Fetches all resume data server-side
+ * Server Component - Fetches dashboard statistics and data
  */
 export default async function DashboardPage() {
   // Get userId from session
   const userId = await getUserId();
 
   // Fetch data server-side using repositories
-  const profileRepo = getProfileRepository(userId);
-  const resumeRepo = getResumeRepository(userId);
-  const jobRepo = getJobRepository();
+  const profileRepo = await getProfileRepository(userId);
+  const resumeRepo = await getResumeRepository(userId);
+  const jobRepo = await getJobRepository();
+  const applicationRepo = await getApplicationRepository(userId);
 
-  const [profile, resumesList, jobs] = await Promise.all([
+  const [profile, resumesList, jobs, applicationStats, allApplications] = await Promise.all([
     profileRepo.getProfile(),
     resumeRepo.getResumesList(),
-    jobRepo.getAll()
+    jobRepo.findAll(),
+    applicationRepo.getStatistics(),
+    applicationRepo.getAll(),
   ]);
 
-  const baseResume = profile?.baseResumeId ? await resumeRepo.getById(profile.baseResumeId) : null;
-
-  const filteredResumesList = resumesList.filter(resume => resume.id !== profile?.baseResumeId);
-
-
+  // Calculate counts
+  const stats = {
+    totalJobs: jobs.length,
+    totalResumes: resumesList.length,
+    totalApplications: applicationStats.total,
+    submittedApplications: applicationStats.submitted,
+    pendingApplications: applicationStats.pending,
+    failedApplications: applicationStats.failed,
+  };
 
   // Pass data to client component
   return (
-    <DashboardClientPage
-      profile={profile}
-      resumesList={filteredResumesList}
-      jobs={jobs}
-      baseResume={baseResume}
+    <DashboardOverviewClientPage
+      stats={stats}
+      applications={allApplications}
     />
   );
 }

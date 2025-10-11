@@ -1,8 +1,7 @@
-import "@/styles/globals.css";
-// import "@/styles/resume.css";
+import "@/styles/global.css";
 import { Toaster } from "@/components/ui/sonner";
 
-export const metadata = {
+export const metadata  = {
   viewport: {
     width: 'device-width',
     initialScale: 1,

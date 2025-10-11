@@ -14,7 +14,7 @@ export async function saveApplicationAction(
   try {
     // Get userId from session
     const userId = await getUserId();
-    const applicationRepo = getApplicationRepository(userId);
+    const applicationRepo = await getApplicationRepository(userId);
 
     const id = await applicationRepo.save({ ...application, userId });
 
@@ -43,9 +43,9 @@ export async function updateApplicationAction(
   try {
     // Get userId from session
     const userId = await getUserId();
-    const applicationRepo = getApplicationRepository(userId);
+    const applicationRepo = await getApplicationRepository(userId);
 
-    const updated = await applicationRepo.update(id, updates);
+    const updated = await applicationRepo.updateOne(id, updates);
 
     if (!updated) {
       return { success: false, error: 'Application not found' };
@@ -73,9 +73,9 @@ export async function deleteApplicationAction(id: string): Promise<{ success: bo
   try {
     // Get userId from session
     const userId = await getUserId();
-    const applicationRepo = getApplicationRepository(userId);
+    const applicationRepo = await getApplicationRepository(userId);
 
-    const deleted = await applicationRepo.delete(id);
+    const deleted = await applicationRepo.deleteOne(id);
 
     if (deleted) {
       console.log('✅ Application deleted for user:', userId, 'ID:', id);
@@ -100,7 +100,7 @@ export async function deleteApplicationsByJobIdAction(
   try {
     // Get userId from session
     const userId = await getUserId();
-    const applicationRepo = getApplicationRepository(userId);
+    const applicationRepo = await getApplicationRepository(userId);
 
     const count = await applicationRepo.deleteByJobId(jobId);
     console.log(`✅ Deleted ${count} applications for user: ${userId}, job: ${jobId}`);

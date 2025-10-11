@@ -97,8 +97,8 @@ const features = [
     className: 'col-span-3 lg:col-span-1',
     background: (
       <div className="overflow-hidden absolute inset-0">
-        <div className="absolute -right-8 top-1/2 w-32 h-32 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-40 blur-3xl -translate-y-1/2" />
-        <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-gradient-to-r from-orange-400 to-red-500 rounded-full opacity-30 blur-2xl" />
+        <div className="absolute -right-8 top-1/2 w-32 h-32 bg-linear-to-r from-yellow-400 to-orange-500 rounded-full opacity-40 blur-3xl -translate-y-1/2" />
+        <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-linear-to-r from-orange-400 to-red-500 rounded-full opacity-30 blur-2xl" />
       </div>
     ),
   },

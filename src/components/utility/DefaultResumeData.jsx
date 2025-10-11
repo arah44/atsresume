@@ -1,4 +1,5 @@
 const DefaultResumeData = {
+  id: "",
   name: "MARCUS HALL",
   position: "Developer",
   contactInformation: "+1-555-0100",

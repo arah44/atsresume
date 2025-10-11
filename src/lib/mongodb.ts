@@ -57,7 +57,7 @@ export async function getMongoClient(): Promise<MongoClient> {
  */
 export async function getCacheDatabase() {
   const client = await clientPromise;
-  return client.db('ATSResumeCache');
+  return client.db('cache');
 }
 
 /**
@@ -65,7 +65,7 @@ export async function getCacheDatabase() {
  */
 export async function getAuthDatabase() {
   const client = await clientPromise;
-  return client.db('ATSResumeAuth');
+  return client.db('auth');
 }
 
 /**
@@ -93,6 +93,6 @@ export function getAuthClientSync() {
  */
 export async function getUserDataDatabase() {
   const client = await clientPromise;
-  return client.db('ATSResumeData');
+  return client.db('data');
 }
 

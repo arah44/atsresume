@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { JobFormData } from './types';
 import { SavedJob } from '@/services/repositories';
-import { JobDataParser } from '@/services/jobDataParser';
+import { JobDataParser } from '@/lib/scraper/job-scraper/'
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -46,7 +46,7 @@ export const Step2JobSelection: React.FC<Step2JobSelectionProps> = ({
 
     setIsImporting(true);
     try {
-      const response = await fetch('/api/scrape', {
+      const response = await fetch('/api/scrape-jobs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,13 +83,14 @@ export const Step2JobSelection: React.FC<Step2JobSelectionProps> = ({
       setIsImporting(false);
     }
   };
+  const jobDataParser = new JobDataParser();
 
   const handleParseJobData = async () => {
     if (!rawJobContent.trim()) return;
 
     setIsParsing(true);
     try {
-      const parsed = JobDataParser.parseRawJobData(rawJobContent);
+      const parsed = await jobDataParser.parseRawJobData(rawJobContent);
 
       form.setValue('name', parsed.name || '');
       form.setValue('company', parsed.company || '');

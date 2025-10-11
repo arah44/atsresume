@@ -15,7 +15,7 @@ export async function saveResumeAction(
   try {
     // Get userId from session
     const userId = await getUserId();
-    const resumeRepo = getResumeRepository(userId);
+    const resumeRepo = await getResumeRepository(userId);
 
     // Set jobId if provided
     const resumeWithJobId = jobId ? { ...resume, jobId } : resume;
@@ -46,7 +46,7 @@ export async function saveBaseResumeAction(
   try {
     // Get userId from session
     const userId = await getUserId();
-    const resumeRepo = getResumeRepository(userId);
+    const resumeRepo = await getResumeRepository(userId);
 
     // Ensure no jobId for base resume
     const baseResume = { ...resume, jobId: undefined };
@@ -77,9 +77,9 @@ export async function updateResumeAction(
   try {
     // Get userId from session
     const userId = await getUserId();
-    const resumeRepo = getResumeRepository(userId);
+    const resumeRepo = await getResumeRepository(userId);
 
-    const updated = await resumeRepo.update(id, updates);
+    const updated = await resumeRepo.updateOne(id, updates);
 
     if (!updated) {
       return { success: false, error: 'Resume not found' };
@@ -108,9 +108,9 @@ export async function deleteResumeAction(id: string): Promise<{ success: boolean
   try {
     // Get userId from session
     const userId = await getUserId();
-    const resumeRepo = getResumeRepository(userId);
+    const resumeRepo = await getResumeRepository(userId);
 
-    const deleted = await resumeRepo.delete(id);
+    const deleted = await resumeRepo.deleteOne(id);
 
     if (deleted) {
       console.log('✅ Resume deleted for user:', userId, 'ID:', id);

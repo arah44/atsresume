@@ -92,7 +92,7 @@ export const ResumeGenerationLoadingState: React.FC<ResumeGenerationLoadingState
               className={`h-full transition-all duration-500 ease-out ${
                 isCompleted
                   ? 'bg-green-500'
-                  : 'bg-gradient-to-r from-purple-600 to-blue-600'
+                  : 'bg-linear-to-r from-purple-600 to-blue-600'
               }`}
               style={{ width: `${progress}%` }}
             />

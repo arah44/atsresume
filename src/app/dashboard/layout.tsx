@@ -14,13 +14,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const userId = await getUserId()
 
   // Fetch profile and jobs for wizard
-  const profileRepo = getProfileRepository(userId)
-  const jobRepo = getJobRepository()
+  const profileRepo = await getProfileRepository(userId)
+  const jobRepo = await getJobRepository()
 
-  const [profile, jobs] = await Promise.all([
-    profileRepo.getProfile(),
-    jobRepo.getAllSorted()
-  ])
+  let profile: any = null;
+  let jobs: any[] = [];
+
+  try {
+    [profile, jobs] = await Promise.all([
+      profileRepo.getProfile(),
+      jobRepo.getAllSorted()
+    ]);
+  } catch (error) {
+    console.error('[DashboardLayout] Error fetching data:', error);
+    // Continue with null/empty data - the components will handle missing data gracefully
+  }
 
   return (<>
 

@@ -1,5 +1,39 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
+// Prompt: Job Data Extraction
+// Extracts structured job information from raw job posting content
+export const jobDataExtractionPrompt = ChatPromptTemplate.fromTemplate(`
+You are an expert at extracting structured information from job postings.
+
+Analyze the following raw job posting content and extract key information:
+
+RAW CONTENT:
+{rawContent}
+
+SOURCE URL (if provided):
+{url}
+
+TASK: Extract the following information from the job posting:
+1. Job Title/Position: The specific role being advertised
+2. Company Name: The organization offering the position
+3. Job Description: A comprehensive description of the role, responsibilities, and requirements (100-2000 characters)
+4. Remote Work: Determine if remote work is allowed:
+   - Set to true if keywords like "remote", "WFH", "work from home", "distributed", "telecommute" are mentioned
+   - Set to false if explicitly on-site only (e.g., "on-site only", "no remote", "in-office required")
+   - Leave undefined if unclear
+5. Apply URL: The application link if explicitly mentioned in the content
+6. Easy Apply: Whether this is an easy/quick apply position (e.g., "LinkedIn Easy Apply", "one-click apply")
+
+EXTRACTION GUIDELINES:
+- Be accurate and extract only what's present in the content
+- For company name, check both the content and the URL
+- For job description, extract or summarize the main content (responsibilities, requirements, qualifications)
+- Use the URL as a hint for company name if not found in content
+- If information is missing or unclear, use appropriate default or leave optional fields undefined
+
+{format_instructions}
+`);
+
 // Prompt 0: Profile to Base Resume Conversion
 // Converts a Person's raw content into a complete, structured base resume
 export const profileToBaseResumePrompt = ChatPromptTemplate.fromTemplate(`

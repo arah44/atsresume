@@ -9,6 +9,8 @@ import {
   UserIcon,
   BriefcaseIcon,
   PlusIcon,
+  FileTextIcon,
+  SettingsIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -26,24 +28,34 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/auth-client"
-import { UserProfile } from "@/services/repositories/ProfileRepository"
-import { SavedJob } from "@/services/repositories/JobRepository"
+import { UserProfile } from "@/services/repositories"
+import { SavedJob } from "@/services/repositories"
 
 const navMain = [
   {
-    title: "My Resumes",
+    title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboardIcon,
   },
   {
-    title: "Profiles",
-    url: "/dashboard/profile",
-    icon: UserIcon,
+    title: "Resumes",
+    url: "/dashboard/resumes",
+    icon: FileTextIcon,
   },
   {
     title: "Jobs",
     url: "/dashboard/jobs",
     icon: BriefcaseIcon,
+  },
+  {
+    title: "Profile",
+    url: "/dashboard/profile",
+    icon: UserIcon,
+  },
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: SettingsIcon,
   },
 ];
 
@@ -57,7 +69,7 @@ const navSecondary = [
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   initialProfile: UserProfile | null
-  initialJobs: SavedJob[]
+  initialJobs: SavedJob[] | null
 }
 
 export function AppSidebar({ initialProfile, initialJobs, ...props }: AppSidebarProps) {
@@ -83,7 +95,7 @@ export function AppSidebar({ initialProfile, initialJobs, ...props }: AppSidebar
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                className="data-[slot=sidebar-menu-button]:!p-1.5"
+                className="data-[slot=sidebar-menu-button]:p-1.5!"
               >
                 <Link href="/">
                   <SparklesIcon className="w-5 h-5" />
@@ -120,7 +132,7 @@ export function AppSidebar({ initialProfile, initialJobs, ...props }: AppSidebar
         open={isWizardOpen}
         onOpenChange={setIsWizardOpen}
         initialProfile={initialProfile}
-        initialJobs={initialJobs}
+        initialJobs={initialJobs || []}
       />
     </>
   )

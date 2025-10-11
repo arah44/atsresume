@@ -4,8 +4,6 @@ import { getJobRepository } from '@/services/repositories';
 import { TargetJobJson } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const jobRepo = getJobRepository();
-
 /**
  * MUTATION: Save new job
  */
@@ -13,6 +11,7 @@ export async function saveJobAction(
   job: TargetJobJson
 ): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
+    const jobRepo = await getJobRepository();
     const id = await jobRepo.save(job);
     console.log('✅ Job saved:', id);
     
@@ -37,6 +36,7 @@ export async function updateJobAction(
   updates: Partial<TargetJobJson>
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    const jobRepo = await getJobRepository();
     const updated = await jobRepo.update(id, updates);
     
     if (!updated) {
@@ -64,7 +64,8 @@ export async function updateJobAction(
  */
 export async function deleteJobAction(id: string): Promise<{ success: boolean }> {
   try {
-    const deleted = await jobRepo.delete(id);
+    const jobRepo = await getJobRepository();
+    const deleted = await jobRepo.deleteOne(id);
     
     if (deleted) {
       console.log('✅ Job deleted:', id);

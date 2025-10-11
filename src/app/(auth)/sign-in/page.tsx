@@ -79,7 +79,7 @@ export default function SignInPage() {
         transition={{ duration: 0.5 }}
         className="relative z-10 px-4 w-full max-w-md"
       >
-        <Card className="border-2 shadow-2xl backdrop-blur-sm bg-background/95">
+        <Card className="border-2 shadow-2xl backdrop-blur-xs bg-background/95">
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
               <div className="p-3 rounded-full bg-primary/10">

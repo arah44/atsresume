@@ -9,10 +9,12 @@ export const OPENAI_CONFIG = {
   apiKey: process.env.OPENAI_API_KEY,
   models: {
     gpt4o: 'gpt-4o',
-    gpt5: 'gpt-5',
     gpt4oMini: 'gpt-4o-mini',
+    gpt5: 'gpt-5',
+    gpt5Mini: 'gpt-5-mini',
+    gpt5nano: 'gpt-5-nano',
   },
-  defaultModel: 'gpt-4o', // Best for PDF parsing
+  defaultModel: process.env.OPENAI_DEFAULT_MODEL || 'gpt-5-mini', // Best for PDF parsing
 };
 
 let openaiClient: OpenAI | null = null;

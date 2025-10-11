@@ -9,7 +9,7 @@ export const OPENROUTER_CONFIG = {
     claude: "anthropic/claude-3-5-sonnet",
     gemini: "google/gemini-pro-1.5"
   },
-  defaultModel: "openai/gpt-4o", // GPT-4o has better structured output support
+  defaultModel: process.env.OPENROUTER_DEFAULT_MODEL || "openai/gpt-5-mini", // GPT-4o has better structured output support
   temperature: 0.3,
   maxTokens: 4000,
   streaming: false, // Disabled for structured output compatibility

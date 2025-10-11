@@ -2,10 +2,10 @@ import * as crypto from 'crypto';
 import { LangChainResumeGenerator } from '../langchainResumeGenerator';
 import type { Person, TargetJobJson, Resume, DataTransformationResult, ResumeGenerationInput } from '../../types';
 import type { JobAnalysis, WorkExperience, SkillCategory } from './schemas';
-import { getStorageService } from '../storage';
+import { MongoCacheStorage } from '../mongodb/cache-storage';
 
-// Global storage service instance
-const storage = getStorageService();
+// Global cache storage instance
+const storage = new MongoCacheStorage();
 
 /**
  * Generates a hash for cache key from input data
@@ -32,7 +32,7 @@ function generateHash(data: any): string {
  * Reads from cache if exists
  */
 async function readCache<T>(cacheKey: string): Promise<T | null> {
-  const cached = await storage.readData<T>(cacheKey);
+  const cached = await storage.readAsync<T>(cacheKey);
 
   if (cached) {
     console.log(`💾 Cache HIT: ${cacheKey.substring(0, 16)}...`);
@@ -47,7 +47,7 @@ async function readCache<T>(cacheKey: string): Promise<T | null> {
  * Writes to cache
  */
 async function writeCache<T>(cacheKey: string, data: T): Promise<void> {
-  await storage.writeData(cacheKey, data);
+  await storage.writeAsync(cacheKey, data);
   console.log(`💾 Cached: ${cacheKey.substring(0, 16)}...`);
 }
 
@@ -63,7 +63,7 @@ export async function clearCache(): Promise<void> {
  * Lists cache files
  */
 export async function listCache(): Promise<void> {
-  const keys = await storage.listKeys();
+  const keys = await storage.listKeysAsync();
 
   console.log(`\n📂 Cache Storage: MongoDB`);
   console.log(`📊 Total cached items: ${keys.length}\n`);
@@ -219,14 +219,14 @@ export async function getCacheStats(): Promise<{
   totalSize: number;
 }> {
   try {
-    const keys = await storage.listKeys();
+    const keys = await storage.listKeysAsync();
     let totalSize = 0;
 
     // Calculate total size
     for (const key of keys) {
-      const metadata = await storage.getMetadata(key);
-      if (metadata) {
-        totalSize += metadata.size;
+      const stats = await storage.getStats();
+      if (stats) {
+        totalSize += stats.size;
       }
     }
 

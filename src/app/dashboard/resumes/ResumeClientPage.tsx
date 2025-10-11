@@ -28,7 +28,7 @@ interface DashboardClientPageProps {
   baseResume: Resume | null;
 }
 
-export function DashboardClientPage({
+export function ResumeClientPage({
   profile,
   resumesList,
   jobs,

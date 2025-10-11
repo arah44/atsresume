@@ -10,8 +10,8 @@ export default async function JobsPage() {
   const userId = await getUserId();
 
   // Fetch data server-side using repositories
-  const jobRepo = getJobRepository();
-  const profileRepo = getProfileRepository(userId);
+  const jobRepo = await getJobRepository();
+  const profileRepo = await getProfileRepository(userId);
 
   const [jobs, profile] = await Promise.all([
     jobRepo.getAllSorted(),

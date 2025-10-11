@@ -2,17 +2,33 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser, StructuredOutputParser } from "@langchain/core/output_parsers";
 import { getLLM } from "./core";
 import {
+  jobDataExtractionPrompt,
   profileToBaseResumePrompt,
   jobAnalysisPrompt,
   keywordExtractionPrompt,
   resumeOptimizationPrompt
 } from "./prompts";
 import {
+  jobDataExtractionSchema,
   profileToBaseResumeSchema,
   jobAnalysisSchema,
   keywordsSchema,
   resumeSchema
 } from "./schemas";
+
+// Chain: Job Data Extraction
+// Extracts structured job information from raw job posting content
+export const createJobDataExtractionChain = () => {
+  const parser = StructuredOutputParser.fromZodSchema(jobDataExtractionSchema as any);
+  return RunnableSequence.from([
+    jobDataExtractionPrompt,
+    getLLM(),
+    parser
+  ]);
+};
+
+// Export parser for format instructions
+export const jobDataExtractionParser = StructuredOutputParser.fromZodSchema(jobDataExtractionSchema as any);
 
 // Chain 0: Profile to Base Resume Conversion
 // Converts Person's raw_content into a complete structured base resume
@@ -71,6 +87,7 @@ export const createResumeOptimizationChain = () => {
 export const resumeOptimizationParser = StructuredOutputParser.fromZodSchema(resumeSchema as any);
 
 // Export chain factories
+export const jobDataExtractionChain = createJobDataExtractionChain;
 export const profileToBaseResumeChain = createProfileToBaseResumeChain;
 export const jobAnalysisChain = createJobAnalysisChain;
 export const keywordExtractionChain = createKeywordExtractionChain;

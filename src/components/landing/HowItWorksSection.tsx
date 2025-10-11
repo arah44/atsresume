@@ -70,7 +70,7 @@ const timelineData = steps.map((step) => {
         <div className="flex items-center gap-4 mb-6">
           <div
             className={cn(
-              'flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg',
+              'flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br shadow-lg',
               step.color
             )}
           >
@@ -78,7 +78,7 @@ const timelineData = steps.map((step) => {
           </div>
           <div
             className={cn(
-              'flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br text-2xl font-bold text-white shadow-md',
+              'flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br text-2xl font-bold text-white shadow-md',
               step.color
             )}
           >

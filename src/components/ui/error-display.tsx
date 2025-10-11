@@ -33,7 +33,7 @@ export function ErrorDisplay({
       {onDismiss && (
         <button
           onClick={onDismiss}
-          className="absolute top-3 right-3 p-1 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          className="absolute top-3 right-3 p-1 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2"
           aria-label="Dismiss error"
         >
           <X className="w-4 h-4" />

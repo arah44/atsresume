@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SavedJob, SavedResume } from '@/services/repositories';
-import { TargetJobJson, GenerationStatus } from '@/types';
-import { TargetJobForm } from '@/components/resumeGenerator/forms/TargetJobForm';
+import { TargetJobJson, GenerationStatus, JobFormData } from '@/types';
+import { AddJobForm } from '@/components/forms/add-job-form';
 import { BulkJobImport } from '@/components/resumeGenerator/BulkJobImport';
 import { generateResumeAction } from '@/app/actions/resumeGeneration';
 import { saveJobAction, updateJobAction, deleteJobAction } from '@/app/actions/jobActions';
@@ -46,8 +46,14 @@ export function JobsClientPage({ initialJobs, hasProfile, hasBaseResume }: JobsC
   const [editingJob, setEditingJob] = useState<SavedJob | null>(null);
   const [generatingJobs, setGeneratingJobs] = useState<Map<string, JobGenerationState>>(new Map());
 
-  const handleCreate = async (data: TargetJobJson) => {
-    const result = await saveJobAction(data);
+  const handleCreate = async (data: JobFormData) => {
+    const jobData: TargetJobJson = {
+      ...data,
+      url: data.url || '',
+      description: data.description || '',
+    };
+    
+    const result = await saveJobAction(jobData);
     if (result.success) {
       toast.success('Job saved successfully');
       setShowCreateDialog(false);
@@ -57,10 +63,16 @@ export function JobsClientPage({ initialJobs, hasProfile, hasBaseResume }: JobsC
     }
   };
 
-  const handleUpdate = async (data: TargetJobJson) => {
+  const handleUpdate = async (data: JobFormData) => {
     if (!editingJob) return;
 
-    const result = await updateJobAction(editingJob.id, data);
+    const jobData: TargetJobJson = {
+      ...data,
+      url: data.url || '',
+      description: data.description || '',
+    };
+
+    const result = await updateJobAction(editingJob.id, jobData);
     if (result.success) {
       toast.success('Job updated successfully');
       setEditingJob(null);
@@ -200,7 +212,7 @@ export function JobsClientPage({ initialJobs, hasProfile, hasBaseResume }: JobsC
     }
   };
 
-  const emptyJob: TargetJobJson = {
+  const emptyJob: Partial<JobFormData> = {
     name: '',
     url: '',
     company: '',
@@ -416,7 +428,7 @@ export function JobsClientPage({ initialJobs, hasProfile, hasBaseResume }: JobsC
               Add a new target job posting to your collection
             </DialogDescription>
           </DialogHeader>
-          <TargetJobForm
+          <AddJobForm
             initialData={emptyJob}
             onSubmit={handleCreate}
             onCancel={() => setShowCreateDialog(false)}
@@ -434,7 +446,7 @@ export function JobsClientPage({ initialJobs, hasProfile, hasBaseResume }: JobsC
             </DialogDescription>
           </DialogHeader>
           {editingJob && (
-            <TargetJobForm
+            <AddJobForm
               initialData={{
                 name: editingJob.name,
                 url: editingJob.url,

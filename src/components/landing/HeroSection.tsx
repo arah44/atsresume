@@ -14,7 +14,7 @@ export function HeroSection() {
       {/* Background Pattern */}
       <DotPattern
         className={cn(
-          'absolute inset-0 [mask-image:radial-gradient(600px_circle_at_center,white,transparent)]'
+          'absolute inset-0 mask-[radial-gradient(600px_circle_at_center,white,transparent)]'
         )}
       />
 
@@ -25,7 +25,7 @@ export function HeroSection() {
             <div className="inline-flex justify-center items-center mb-6 sm:mb-8">
               <AnimatedGradientText>
                 <Sparkles className="mr-2 w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="text-sm sm:text-base inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent">
+                <span className="text-sm sm:text-base inline animate-gradient bg-linear-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-size-[var(--bg-size)_100%] bg-clip-text text-transparent">
                   AI-Powered Resume Optimization
                 </span>
               </AnimatedGradientText>
@@ -36,7 +36,7 @@ export function HeroSection() {
           <BlurFade delay={0.2} inView>
             <h1 className="mb-4 sm:mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground">
               Create{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
               Job-Specific Resumes
               </span>{' '}
               in Minutes

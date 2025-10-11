@@ -1,4 +1,5 @@
 import { Resume } from '../types';
+import { hash } from './hash';
 
 /**
  * Generate a unique UUID for a resume
@@ -8,8 +9,9 @@ import { Resume } from '../types';
  */
 export function generateResumeId(resume?: Resume): string {
   // Use Web Crypto API for UUID generation
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
+  try {
+    return hash(JSON.stringify(resume));
+  } catch (error) {
   }
 
   // Fallback for environments without crypto.randomUUID

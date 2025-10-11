@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // Base types for the resume generation system
 export interface SocialMediaLink {
   socialMedia: string;
@@ -80,7 +82,8 @@ export interface PreviewField {
 }
 
 // Target job data structure (job posting details)
-export interface TargetJobJson {
+export type TargetJobJson = {
+  id: string;
   name: string;
   url: string;
   company: string;
@@ -90,6 +93,21 @@ export interface TargetJobJson {
   is_easy_apply?: boolean;
   remote_allowed?: boolean;
 }
+
+// Job form schema and data type (for form validation and data entry)
+export const jobSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, 'Job title is required'),
+  company: z.string().min(1, 'Company name is required'),
+  url: z.string().optional().or(z.literal('')),
+  description: z.string().optional().or(z.literal('')),
+  raw_content: z.string().min(10, 'Job content is required'),
+  apply_url: z.string().optional(),
+  is_easy_apply: z.boolean().optional(),
+  remote_allowed: z.boolean().optional()
+});
+
+export type JobFormData = z.infer<typeof jobSchema>;
 
 export interface CustomSection {
   title: string;

@@ -72,8 +72,8 @@ export async function generateResumeAction(
       console.log('📥 Fetching base resume from resume repository...');
       const userId = await getUserId();
       const { getProfileRepository, getResumeRepository } = await import('@/services/repositories');
-      const profileRepo = getProfileRepository(userId);
-      const resumeRepo = getResumeRepository(userId);
+      const profileRepo = await getProfileRepository(userId);
+      const resumeRepo = await getResumeRepository(userId);
       
       const profile = await profileRepo.getProfile();
 
@@ -81,7 +81,7 @@ export async function generateResumeAction(
         throw new Error('No base resume found. Please create your profile first.');
       }
 
-      const baseResumeFromRepo = await resumeRepo.getById(profile.baseResumeId);
+      const baseResumeFromRepo = await resumeRepo.findById(profile.baseResumeId);
       if (!baseResumeFromRepo) {
         throw new Error('Base resume not found in repository. Please regenerate your profile.');
       }

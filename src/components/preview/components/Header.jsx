@@ -17,10 +17,10 @@ const Header = ({ resumeData, icons }) => {
         </div>
       )}
 
-      <h1 className="name">{resumeData.name}</h1>
-      <p className="profession">{resumeData.position}</p>
+      <h1 className="text-center name">{resumeData.name}</h1>
+      <p className="text-center profession">{resumeData.position}</p>
 
-      <div class="flex gap-4 items-center">
+      <div class="flex gap-4 justify-center items-center">
 
       <ContactInfo
         mainclass="flex flex-row gap-1 mb-1 contact"

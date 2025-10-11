@@ -116,3 +116,15 @@ export const profileToBaseResumeSchema = z.object({
 
 export type ProfileToBaseResume = z.infer<typeof profileToBaseResumeSchema>;
 
+// Schema for job data extraction from raw content
+export const jobDataExtractionSchema = z.object({
+  jobTitle: z.string().describe("The job title/position being advertised"),
+  companyName: z.string().describe("The company name offering the position"),
+  jobDescription: z.string().describe("A comprehensive job description (extracted from the content, 100-2000 characters)"),
+  remoteAllowed: z.boolean().optional().describe("Whether remote work is allowed (true if remote/WFH is mentioned, false if explicitly on-site only, undefined if unclear)"),
+  applyUrl: z.string().optional().describe("The application URL if explicitly mentioned in the content"),
+  isEasyApply: z.boolean().optional().describe("Whether this is an easy apply position (e.g., LinkedIn Easy Apply, one-click apply)")
+});
+
+export type JobDataExtraction = z.infer<typeof jobDataExtractionSchema>;
+

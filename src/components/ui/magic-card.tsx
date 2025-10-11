@@ -63,7 +63,7 @@ export function MagicCard({
 
     return () => {
       window.removeEventListener("pointerout", handleGlobalPointerOut)
-      window.removeEventListener("blur", reset)
+      window.removeEventListener("blur-sm", reset)
       document.removeEventListener("visibilitychange", handleVisibility)
     }
   }, [reset])

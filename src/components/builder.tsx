@@ -155,7 +155,7 @@ function BuilderContent({ initialResume }) {
         </DialogContent>
       </Dialog>
 
-      <div className="gap-4 justify-evenly max-w-7xl f-col md:flex-row md:mx-auto md:h-screen">
+      <div className="flex flex-col gap-4 justify-evenly max-w-7xl md:flex-row f-col md:mx-auto md:h-screen">
         {!formClose && (
           <Form/>
         )}

@@ -51,7 +51,7 @@ export async function saveProfileAction(
 
     // Get userId from session
     const userId = await getUserId();
-    const profileRepo = getProfileRepository(userId);
+    const profileRepo = await getProfileRepository(userId);
 
     console.log('📝 Saving profile for user:', userId);
 
@@ -63,7 +63,7 @@ export async function saveProfileAction(
 
     // Save base resume to resume repository
     const { getResumeRepository } = await import('@/services/repositories');
-    const resumeRepo = getResumeRepository(userId);
+    const resumeRepo = await getResumeRepository(userId);
     const baseResumeId = await resumeRepo.saveBaseResume(baseResume);
 
     // Save profile with base resume ID reference
@@ -103,12 +103,12 @@ export async function updateProfileAction(
   try {
     // Get userId from session
     const userId = await getUserId();
-    const profileRepo = getProfileRepository(userId);
+    const profileRepo = await getProfileRepository(userId);
 
     // If baseResume is being updated, save it to resume repository first
     if ('baseResume' in updates && updates.baseResume) {
       const { getResumeRepository } = await import('@/services/repositories');
-      const resumeRepo = getResumeRepository(userId);
+      const resumeRepo = await getResumeRepository(userId);
       const baseResumeId = await resumeRepo.saveBaseResume(updates.baseResume as Resume);
       
       // Replace baseResume with baseResumeId
@@ -145,7 +145,7 @@ export async function deleteProfileAction(): Promise<{ success: boolean }> {
   try {
     // Get userId from session
     const userId = await getUserId();
-    const profileRepo = getProfileRepository(userId);
+    const profileRepo = await getProfileRepository(userId);
 
     await profileRepo.deleteProfile();
     console.log('✅ Profile deleted for user:', userId);
@@ -168,9 +168,9 @@ export async function regenerateBaseResumeAction(): Promise<{ success: boolean; 
   try {
     // Get userId from session
     const userId = await getUserId();
-    const profileRepo = getProfileRepository(userId);
+    const profileRepo = await getProfileRepository(userId);
     const { getResumeRepository } = await import('@/services/repositories');
-    const resumeRepo = getResumeRepository(userId);
+    const resumeRepo = await getResumeRepository(userId);
 
     const profile = await profileRepo.getProfile();
 
@@ -181,7 +181,7 @@ export async function regenerateBaseResumeAction(): Promise<{ success: boolean; 
     // Delete old base resume if it exists
     if (profile.baseResumeId) {
       try {
-        await resumeRepo.delete(profile.baseResumeId);
+        await resumeRepo.deleteOne(profile.baseResumeId);
       } catch (error) {
         console.warn('Failed to delete old base resume:', error);
       }

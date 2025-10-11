@@ -10,7 +10,7 @@ export default async function BaseResumePage() {
   // Get userId from session
   const userId = await getUserId();
 
-  const profileRepo = getProfileRepository(userId);
+  const profileRepo = await getProfileRepository(userId);
   const profile = await profileRepo.getProfile();
 
   if (!profile || !profile.baseResumeId) {
